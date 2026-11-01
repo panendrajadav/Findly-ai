@@ -4,6 +4,7 @@ import {
   RefreshCw, CheckCircle2, AlertTriangle, Eye, Sparkles,
   Database, GitBranch, Radio, Terminal
 } from 'lucide-react';
+import FindlyLogo from './FindlyLogo';
 
 export default function SettingsView() {
   const [health, setHealth] = useState(null);
@@ -38,19 +39,19 @@ export default function SettingsView() {
   }, []);
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 pb-10">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-8 pb-10 py-2">
       {/* Settings Header */}
-      <div className="glass-card p-6 border border-white/10 rounded-3xl bg-navy-900/80 shadow-2xl relative overflow-hidden">
-        <div className="ambient-glow-blue w-80 h-80 -top-20 -right-20"></div>
+      <div className="p-6 border border-[#009B4D]/30 rounded-3xl bg-[#09160e]/85 shadow-2xl relative overflow-hidden">
+        <div className="ambient-glow-green w-80 h-80 -top-20 -right-20"></div>
         <div className="flex items-center space-x-3.5 relative z-10">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
-            <SettingsIcon className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#009B4D] to-[#008240] flex items-center justify-center text-[#FAF5E9] shadow-lg shadow-[#009B4D]/25 border border-[#009B4D]/30">
+            <SettingsIcon className="w-6 h-6 text-[#FFCC00]" />
           </div>
           <div>
-            <h2 className="text-2xl font-extrabold text-white tracking-tight">
+            <h2 className="text-2xl font-extrabold text-[#FAF5E9] tracking-tight">
               Settings & Configuration
             </h2>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-[#FAF5E9]/70 mt-1">
               Manage STAIR retrieval parameters, model inference configuration, and DevOps safety guardrails.
             </p>
           </div>
@@ -59,27 +60,27 @@ export default function SettingsView() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Backend & Environment */}
-        <div className="glass-card p-6 border border-white/10 rounded-3xl bg-navy-900/70 shadow-xl space-y-4">
-          <div className="flex items-center space-x-2 pb-3 border-b border-white/10 text-white font-bold text-sm">
-            <Server className="w-4 h-4 text-cyan-400" />
+        <div className="p-6 border border-[#009B4D]/30 rounded-3xl bg-[#09160e]/80 shadow-xl space-y-4">
+          <div className="flex items-center space-x-2 pb-3 border-b border-[#009B4D]/25 text-[#FAF5E9] font-bold text-sm">
+            <Server className="w-4 h-4 text-[#009B4D]" />
             <span>FastAPI Backend Services</span>
           </div>
 
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-slate-400 font-semibold block mb-1">API Server Base URL</label>
+              <label className="text-[#FAF5E9]/70 font-semibold block mb-1">API Server Base URL</label>
               <input
                 type="text"
                 readOnly
                 value="http://127.0.0.1:8000"
-                className="w-full bg-navy-950 p-2.5 rounded-xl border border-white/10 text-slate-200 font-mono text-xs focus:outline-none"
+                className="w-full bg-[#050d08] p-2.5 rounded-xl border border-[#009B4D]/30 text-[#FAF5E9] font-mono text-xs focus:outline-none"
               />
             </div>
 
-            <div className="flex items-center justify-between p-3 rounded-xl bg-navy-950/70 border border-white/5">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-[#050d08] border border-[#009B4D]/20">
               <div>
-                <div className="font-semibold text-white">Live Engine Connectivity</div>
-                <div className="text-[11px] text-slate-400 font-mono mt-0.5">
+                <div className="font-semibold text-[#FAF5E9]">Live Engine Connectivity</div>
+                <div className="text-[11px] text-[#FFCC00] font-mono mt-0.5">
                   {health ? `${health.status} (${health.service})` : 'Offline'}
                 </div>
               </div>
@@ -87,164 +88,130 @@ export default function SettingsView() {
               <button
                 onClick={testBackend}
                 disabled={testingConnection}
-                className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs flex items-center space-x-1.5 transition-all shadow-md shadow-blue-500/20"
+                className="px-3.5 py-1.5 rounded-xl bg-[#009B4D] hover:bg-[#00b85b] text-[#FAF5E9] font-bold text-xs flex items-center space-x-1.5 transition-all shadow-md shadow-[#009B4D]/25"
               >
-                <RefreshCw className={`w-3.5 h-3.5 ${testingConnection ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`w-3.5 h-3.5 text-[#FFCC00] ${testingConnection ? 'animate-spin' : ''}`} />
                 <span>Test Link</span>
               </button>
             </div>
 
             {connectionStatus && (
-              <div className="p-3 rounded-xl bg-blue-950/40 border border-blue-500/30 text-blue-200 text-[11px] font-mono leading-relaxed">
+              <div className="p-3 rounded-xl bg-[#0d2015] border border-[#009B4D]/40 text-[#FAF5E9] text-[11px] font-mono leading-relaxed">
                 {connectionStatus}
               </div>
             )}
           </div>
         </div>
 
-        {/* Model & STAIR Retrieval */}
-        <div className="glass-card p-6 border border-white/10 rounded-3xl bg-navy-900/70 shadow-xl space-y-4">
-          <div className="flex items-center space-x-2 pb-3 border-b border-white/10 text-white font-bold text-sm">
-            <Cpu className="w-4 h-4 text-cyan-400" />
-            <span>AI Model & STAIR Inference Engine</span>
+        {/* Inference & STAIR Config */}
+        <div className="p-6 border border-[#009B4D]/30 rounded-3xl bg-[#09160e]/80 shadow-xl space-y-4">
+          <div className="flex items-center space-x-2 pb-3 border-b border-[#009B4D]/25 text-[#FAF5E9] font-bold text-sm">
+            <Cpu className="w-4 h-4 text-[#009B4D]" />
+            <span>AI Inference Engine</span>
           </div>
 
           <div className="space-y-3 text-xs">
             <div>
-              <label className="text-slate-400 font-semibold block mb-1">Inference Engine</label>
-              <div className="p-2.5 rounded-xl bg-navy-950 border border-white/10 text-white font-mono flex items-center justify-between">
-                <span>Qwen Grounded Assistant (1.5B/3B)</span>
-                <span className="text-[10px] text-cyan-400 bg-cyan-950 px-2 py-0.5 rounded-full border border-cyan-800">
-                  Active
-                </span>
+              <label className="text-[#FAF5E9]/70 font-semibold block mb-1">Synthesis Model</label>
+              <div className="p-2.5 rounded-xl bg-[#050d08] border border-[#009B4D]/25 font-mono text-xs text-[#FAF5E9] flex justify-between items-center">
+                <span>Qwen 2.5 Grounded Assistant</span>
+                <span className="text-[10px] text-[#009B4D] font-bold uppercase">Ready</span>
               </div>
             </div>
 
-            <div>
-              <label className="text-slate-400 font-semibold block mb-1">Decoding Constraint</label>
-              <div className="p-2.5 rounded-xl bg-navy-950 border border-white/10 text-white font-mono flex items-center justify-between">
-                <span>Prefix Trie Leaf Constrained</span>
-                <span className="text-[10px] text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-800">
-                  19 Leaves
-                </span>
+            <div className="p-3 rounded-xl bg-[#050d08] border border-[#009B4D]/20 space-y-1.5">
+              <div className="flex justify-between items-center">
+                <span className="text-[#FAF5E9]/70">Context Chunking Policy:</span>
+                <span className="text-[#009B4D] font-mono font-bold">STAIR Complete Sections</span>
               </div>
-            </div>
-
-            <div>
-              <label className="text-slate-400 font-semibold block mb-1">Vector Similarity Metric</label>
-              <div className="p-2.5 rounded-xl bg-navy-950 border border-white/10 text-white font-mono">
-                Cosine Distance (Qdrant Memory Collection)
+              <div className="flex justify-between items-center">
+                <span className="text-[#FAF5E9]/70">Prefix Trie Decoding:</span>
+                <span className="text-[#FFCC00] font-mono font-bold">Constrained Valid Leaves</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-[#FAF5E9]/70">Evidence Isolation:</span>
+                <span className="text-[#FAF5E9] font-mono font-bold">Instance UUID Strict</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Statistical Baselines */}
-        <div className="glass-card p-6 border border-white/10 rounded-3xl bg-navy-900/70 shadow-xl space-y-4">
-          <div className="flex items-center space-x-2 pb-3 border-b border-white/10 text-white font-bold text-sm">
-            <Sliders className="w-4 h-4 text-cyan-400" />
-            <span>OpenStack Normal Baselines</span>
+        <div className="p-6 border border-[#009B4D]/30 rounded-3xl bg-[#09160e]/80 shadow-xl space-y-4">
+          <div className="flex items-center space-x-2 pb-3 border-b border-[#009B4D]/25 text-[#FAF5E9] font-bold text-sm">
+            <Radio className="w-4 h-4 text-[#009B4D]" />
+            <span>OpenStack Telemetry Baseline Thresholds</span>
           </div>
 
           <div className="space-y-3 text-xs">
-            <div className="p-3 bg-navy-950/70 rounded-xl border border-white/5 space-y-1">
-              <div className="flex justify-between font-mono">
-                <span className="text-slate-400">Normal Spawn Mean (μ):</span>
-                <span className="text-cyan-300 font-bold">19.79 seconds</span>
+            <div className="p-3 bg-[#050d08] rounded-xl border border-[#009B4D]/20 space-y-1">
+              <div className="flex justify-between">
+                <span className="text-[#FAF5E9]/70">Normal Spawn Mean (μ):</span>
+                <span className="text-[#FAF5E9] font-mono font-bold">19.79 seconds</span>
               </div>
-              <div className="flex justify-between font-mono">
-                <span className="text-slate-400">Spawn Std Deviation (σ):</span>
-                <span className="text-cyan-300 font-bold">0.65 seconds</span>
+              <div className="flex justify-between">
+                <span className="text-[#FAF5E9]/70">Standard Deviation (σ):</span>
+                <span className="text-[#009B4D] font-mono font-bold">0.65 seconds</span>
               </div>
-              <div className="flex justify-between font-mono">
-                <span className="text-slate-400">Normal Operational Envelope:</span>
-                <span className="text-white font-bold">18.1s – 22.2s</span>
+              <div className="flex justify-between">
+                <span className="text-[#FAF5E9]/70">Normal Envelope:</span>
+                <span className="text-[#FFCC00] font-mono">18.1s – 22.2s</span>
               </div>
             </div>
 
-            <div className="p-3 bg-navy-950/70 rounded-xl border border-white/5 space-y-1">
-              <div className="flex justify-between font-mono">
-                <span className="text-slate-400">Normal Build Mean (μ):</span>
-                <span className="text-cyan-300 font-bold">20.59 seconds</span>
+            <div className="p-3 bg-[#050d08] rounded-xl border border-[#009B4D]/20 space-y-1">
+              <div className="flex justify-between">
+                <span className="text-[#FAF5E9]/70">Normal Build Mean (μ):</span>
+                <span className="text-[#FAF5E9] font-mono font-bold">20.59 seconds</span>
               </div>
-              <div className="flex justify-between font-mono">
-                <span className="text-slate-400">Build Std Deviation (σ):</span>
-                <span className="text-cyan-300 font-bold">0.65 seconds</span>
+              <div className="flex justify-between">
+                <span className="text-[#FAF5E9]/70">Build Std Dev (σ):</span>
+                <span className="text-[#009B4D] font-mono font-bold">0.65 seconds</span>
               </div>
-              <div className="flex justify-between font-mono">
-                <span className="text-slate-400">Anomaly Flagging Threshold:</span>
-                <span className="text-amber-300 font-bold">&gt; +3.0σ (outlier)</span>
+              <div className="flex justify-between">
+                <span className="text-[#FAF5E9]/70">Build Normal Envelope:</span>
+                <span className="text-[#FFCC00] font-mono">18.9s – 23.3s</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Safety & Safety Guardrails */}
-        <div className="glass-card p-6 border border-white/10 rounded-3xl bg-navy-900/70 shadow-xl space-y-4">
-          <div className="flex items-center space-x-2 pb-3 border-b border-white/10 text-white font-bold text-sm">
-            <Shield className="w-4 h-4 text-cyan-400" />
-            <span>DevOps Human-in-the-Loop Safeguards</span>
+        {/* Safety & UI Preferences */}
+        <div className="p-6 border border-[#009B4D]/30 rounded-3xl bg-[#09160e]/80 shadow-xl space-y-4">
+          <div className="flex items-center space-x-2 pb-3 border-b border-[#009B4D]/25 text-[#FAF5E9] font-bold text-sm">
+            <Shield className="w-4 h-4 text-[#009B4D]" />
+            <span>DevOps Safety & Display Preferences</span>
           </div>
 
           <div className="space-y-3 text-xs">
-            <label className="flex items-center justify-between p-3 rounded-xl bg-navy-950/70 border border-white/5 cursor-pointer">
+            <label className="flex items-center justify-between p-3 rounded-xl bg-[#050d08] border border-[#009B4D]/20 cursor-pointer">
               <div>
-                <div className="font-semibold text-white">Strict Operator Approval</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">
-                  Block autonomous execution of Medium and High risk bash procedures.
-                </div>
+                <div className="font-semibold text-[#FAF5E9]">Enforce Operator Approvals</div>
+                <div className="text-[11px] text-[#FAF5E9]/60">Require human authorization for destructive actions</div>
               </div>
               <input
                 type="checkbox"
                 checked={strictOperatorApproval}
                 onChange={(e) => setStrictOperatorApproval(e.target.checked)}
-                className="w-4 h-4 accent-blue-500 rounded"
+                className="accent-[#009B4D] rounded w-4 h-4"
               />
             </label>
 
-            <label className="flex items-center justify-between p-3 rounded-xl bg-navy-950/70 border border-white/5 cursor-pointer">
+            <label className="flex items-center justify-between p-3 rounded-xl bg-[#050d08] border border-[#009B4D]/20 cursor-pointer">
               <div>
-                <div className="font-semibold text-white">Log Evidence Attribution</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">
-                  Mandate line-level Oslo syslog citations for every duration claim.
-                </div>
+                <div className="font-semibold text-[#FAF5E9]">Auto-Ground Citations</div>
+                <div className="text-[11px] text-[#FAF5E9]/60">Display line numbers & timestamps with every answer</div>
               </div>
               <input
                 type="checkbox"
                 checked={autoVerifyCitations}
                 onChange={(e) => setAutoVerifyCitations(e.target.checked)}
-                className="w-4 h-4 accent-blue-500 rounded"
-              />
-            </label>
-
-            <label className="flex items-center justify-between p-3 rounded-xl bg-navy-950/70 border border-white/5 cursor-pointer">
-              <div>
-                <div className="font-semibold text-white">Reduced Motion Mode</div>
-                <div className="text-[11px] text-slate-400 mt-0.5">
-                  Disable continuous animated glows and stepper transitions.
-                </div>
-              </div>
-              <input
-                type="checkbox"
-                checked={reducedMotion}
-                onChange={(e) => setReducedMotion(e.target.checked)}
-                className="w-4 h-4 accent-blue-500 rounded"
+                className="accent-[#009B4D] rounded w-4 h-4"
               />
             </label>
           </div>
         </div>
       </div>
-
-      {/* Research Citations & Metadata */}
-      <div className="glass-card p-6 border border-white/10 rounded-3xl bg-navy-900/50 shadow-xl text-xs space-y-2 text-slate-400">
-        <div className="font-bold text-white uppercase tracking-wider text-[11px]">
-          Research Foundation & Methodology
-        </div>
-        <p className="leading-relaxed">
-          Findly AI implements the <strong>STAIR</strong> architecture (<em>Structure-Aware Information Retriever</em>, arXiv:2609.03874). In contrast to arbitrary fixed chunking, STAIR parses structural hierarchies, registers valid leaf paths inside a prefix Trie, and evaluates section embeddings for complete operational runbook delivery.
-        </p>
-      </div>
     </div>
   );
 }
-

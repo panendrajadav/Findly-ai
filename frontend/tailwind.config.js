@@ -7,31 +7,36 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Core Palette Requested by User
+        brand: {
+          green: '#009B4D',
+          'green-light': '#00b85b',
+          'green-dark': '#007a3c',
+          yellow: '#FFCC00',
+          'yellow-light': '#ffd633',
+          'yellow-dark': '#e6b800',
+          ivory: '#FAF5E9',
+          'ivory-muted': '#f0e8d5',
+          'ivory-subtle': '#e6dcbf',
+        },
+        forest: {
+          950: '#050d08',
+          900: '#09160e',
+          850: '#0d2015',
+          800: '#12291c',
+          750: '#163323',
+          700: '#1c3e2c',
+          600: '#255039',
+        },
+        // Fallback backward-compatible scales
         navy: {
-          950: '#060913',
-          900: '#0a0f1d',
-          850: '#0f172a',
-          800: '#131e36',
-          750: '#182442',
-          700: '#1e2d4d',
+          950: '#050d08',
+          900: '#09160e',
+          850: '#0d2015',
+          800: '#12291c',
+          750: '#163323',
+          700: '#1c3e2c',
         },
-        electric: {
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-        },
-        cyan: {
-          300: '#67e8f9',
-          400: '#22d3ee',
-          500: '#06b6d4',
-          600: '#0891b2',
-        },
-        violet: {
-          400: '#a78bfa',
-          500: '#8b5cf6',
-          600: '#7c3aed',
-        }
       },
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
@@ -40,15 +45,24 @@ export default {
       animation: {
         'pulse-subtle': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'glow-pulse': 'glowPulse 3s ease-in-out infinite',
+        'scan-radar': 'scanRadar 2.5s ease-in-out infinite',
+        'beam-flow': 'beamFlow 2s linear infinite',
       },
       keyframes: {
         glowPulse: {
           '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
           '50%': { opacity: '0.8', transform: 'scale(1.05)' },
+        },
+        scanRadar: {
+          '0%': { transform: 'scale(0.8)', opacity: '0.9' },
+          '100%': { transform: 'scale(2.2)', opacity: '0' },
+        },
+        beamFlow: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(200%)' },
         }
       }
     },
   },
   plugins: [],
 }
-

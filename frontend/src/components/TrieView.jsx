@@ -5,6 +5,7 @@ import {
   Sparkles, Check
 } from 'lucide-react';
 import StairInteractiveVisualizer from './StairInteractiveVisualizer';
+import FindlyLogo from './FindlyLogo';
 
 export default function StairExplorerView({ onSelectQuery }) {
   const [activeSubTab, setActiveSubTab] = useState('visualizer'); // 'visualizer' | 'trie'
@@ -72,37 +73,37 @@ export default function StairExplorerView({ onSelectQuery }) {
   );
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto py-2">
+    <div className="space-y-6 max-w-6xl mx-auto px-4 sm:px-6 py-2">
       {/* Sub-Navigation Switcher (Visualizer vs Trie Registry) */}
-      <div className="flex items-center justify-between pb-2 border-b border-white/10">
+      <div className="flex items-center justify-between pb-2 border-b border-[#009B4D]/30">
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setActiveSubTab('visualizer')}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center space-x-2 ${
+            className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all flex items-center space-x-2 ${
               activeSubTab === 'visualizer'
-                ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-500/25'
-                : 'text-slate-400 hover:text-white bg-navy-950/60 hover:bg-navy-900 border border-white/5'
+                ? 'bg-[#009B4D] text-[#FAF5E9] shadow-lg shadow-[#009B4D]/30'
+                : 'text-[#FAF5E9]/70 hover:text-[#FAF5E9] bg-[#050d08] hover:bg-[#0d2015] border border-[#009B4D]/25'
             }`}
           >
-            <Play className="w-3.5 h-3.5 fill-current" />
+            <Play className="w-3.5 h-3.5 fill-current text-[#FFCC00]" />
             <span>Interactive STAIR Demonstration</span>
           </button>
 
           <button
             onClick={() => setActiveSubTab('trie')}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center space-x-2 ${
+            className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all flex items-center space-x-2 ${
               activeSubTab === 'trie'
-                ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-500/25'
-                : 'text-slate-400 hover:text-white bg-navy-950/60 hover:bg-navy-900 border border-white/5'
+                ? 'bg-[#009B4D] text-[#FAF5E9] shadow-lg shadow-[#009B4D]/30'
+                : 'text-[#FAF5E9]/70 hover:text-[#FAF5E9] bg-[#050d08] hover:bg-[#0d2015] border border-[#009B4D]/25'
             }`}
           >
-            <GitBranch className="w-3.5 h-3.5" />
+            <GitBranch className="w-3.5 h-3.5 text-[#FFCC00]" />
             <span>Prefix Trie Registry & Simulator</span>
           </button>
         </div>
 
-        <div className="text-xs text-slate-400 font-mono hidden md:flex items-center space-x-2">
-          <Layers className="w-3.5 h-3.5 text-cyan-400" />
+        <div className="text-xs text-[#FAF5E9]/70 font-mono hidden md:flex items-center space-x-2">
+          <Layers className="w-3.5 h-3.5 text-[#009B4D]" />
           <span>{leaves.length || 19} Valid Registered Leaf Paths</span>
         </div>
       </div>
@@ -116,14 +117,14 @@ export default function StairExplorerView({ onSelectQuery }) {
       {activeSubTab === 'trie' && (
         <div className="space-y-6">
           {/* Query-to-Leaf Routing Simulator */}
-          <div className="glass-card p-6 border border-white/10 shadow-xl bg-navy-900/80 space-y-4 rounded-3xl">
+          <div className="p-6 border border-[#009B4D]/30 shadow-xl bg-[#09160e]/85 space-y-4 rounded-3xl">
             <div className="flex justify-between items-start">
               <div>
-                <h4 className="text-sm font-bold text-white flex items-center">
-                  <GitBranch className="w-4 h-4 mr-2 text-cyan-400" />
+                <h4 className="text-sm font-bold text-[#FAF5E9] flex items-center">
+                  <GitBranch className="w-4 h-4 mr-2 text-[#009B4D]" />
                   Query-to-Leaf Routing Simulator
                 </h4>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-[#FAF5E9]/70 mt-1">
                   Input a query to evaluate how STAIR evaluates path embeddings against the Prefix Trie to project it strictly into a registered valid leaf node.
                 </p>
               </div>
@@ -131,9 +132,9 @@ export default function StairExplorerView({ onSelectQuery }) {
               <button
                 onClick={fetchTrieData}
                 title="Reload Trie structure"
-                className="p-2 rounded-xl bg-navy-950 hover:bg-navy-900 border border-white/10 text-slate-400 hover:text-white transition-colors"
+                className="p-2 rounded-xl bg-[#050d08] hover:bg-[#0d2015] border border-[#009B4D]/30 text-[#FAF5E9]/70 hover:text-[#FAF5E9] transition-colors"
               >
-                <RefreshCw className="w-3.5 h-3.5" />
+                <RefreshCw className="w-3.5 h-3.5 text-[#FFCC00]" />
               </button>
             </div>
 
@@ -143,42 +144,42 @@ export default function StairExplorerView({ onSelectQuery }) {
                 value={simQuery}
                 onChange={(e) => setSimQuery(e.target.value)}
                 placeholder="Enter operational query (e.g. 'Spawn latency restart compute', 'claims bottleneck memory')..."
-                className="flex-1 bg-navy-950 border border-white/10 rounded-2xl px-5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 font-mono"
+                className="flex-1 bg-[#050d08] border border-[#009B4D]/30 rounded-2xl px-5 py-2.5 text-xs text-[#FAF5E9] placeholder-[#FAF5E9]/50 focus:outline-none focus:border-[#009B4D] font-mono"
               />
               <button
                 type="submit"
                 disabled={simLoading || !simQuery.trim()}
-                className="bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white px-6 py-2.5 rounded-2xl text-xs font-bold flex items-center transition-all shadow-lg shadow-blue-500/25 flex-shrink-0"
+                className="bg-[#009B4D] hover:bg-[#00b85b] disabled:opacity-40 text-[#FAF5E9] px-6 py-2.5 rounded-2xl text-xs font-bold flex items-center transition-all shadow-lg shadow-[#009B4D]/25 flex-shrink-0"
               >
-                {simLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin mr-2" /> : <ArrowRight className="w-3.5 h-3.5 mr-2" />}
+                {simLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin mr-2" /> : <ArrowRight className="w-3.5 h-3.5 mr-2 text-[#FFCC00]" />}
                 Simulate Routing
               </button>
             </form>
 
             {simResult && (
-              <div className="p-5 rounded-2xl bg-navy-950 border border-white/10 space-y-3 text-xs">
-                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-1 pb-2.5 border-b border-white/10">
-                  <span className="text-slate-400">Trie Projected Leaf:</span>
-                  <span className="font-mono text-cyan-300 font-bold bg-cyan-950/60 px-3 py-1 rounded-full border border-cyan-800">
+              <div className="p-5 rounded-2xl bg-[#050d08] border border-[#009B4D]/30 space-y-3 text-xs">
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-1 pb-2.5 border-b border-[#009B4D]/20">
+                  <span className="text-[#FAF5E9]/70">Trie Projected Leaf:</span>
+                  <span className="font-mono text-[#009B4D] font-bold bg-[#0d2015] px-3 py-1 rounded-full border border-[#009B4D]/50">
                     {simResult.leaf_title}
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-[11px]">
-                  <span className="text-slate-400">Validated Hierarchy Path:</span>
-                  <span className="font-mono text-blue-300 font-medium">{simResult.hierarchy_path}</span>
+                  <span className="text-[#FAF5E9]/70">Validated Hierarchy Path:</span>
+                  <span className="font-mono text-[#FFCC00] font-medium">{simResult.hierarchy_path}</span>
                 </div>
                 <div className="flex justify-between items-center text-[11px]">
-                  <span className="text-slate-400">Similarity Confidence:</span>
-                  <span className="font-mono text-white">{simResult.score}</span>
+                  <span className="text-[#FAF5E9]/70">Similarity Confidence:</span>
+                  <span className="font-mono text-[#FAF5E9]">{simResult.score}</span>
                 </div>
                 {simResult.candidate_paths && simResult.candidate_paths.length > 0 && (
                   <div className="pt-2">
-                    <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Candidate Leaf Paths Evaluated:</span>
+                    <span className="text-[10px] text-[#FAF5E9]/50 uppercase font-bold tracking-wider">Candidate Leaf Paths Evaluated:</span>
                     <div className="mt-1.5 space-y-1.5">
                       {simResult.candidate_paths.map((c, i) => (
-                        <div key={i} className="flex justify-between text-[11px] font-mono text-slate-400 bg-navy-900/60 px-3 py-1.5 rounded-xl border border-white/5">
+                        <div key={i} className="flex justify-between text-[11px] font-mono text-[#FAF5E9]/80 bg-[#09160e] px-3 py-1.5 rounded-xl border border-[#009B4D]/15">
                           <span className="truncate max-w-md">{c.path}</span>
-                          <span className="text-cyan-400 font-semibold">{c.score}</span>
+                          <span className="text-[#009B4D] font-semibold">{c.score}</span>
                         </div>
                       ))}
                     </div>
@@ -190,13 +191,13 @@ export default function StairExplorerView({ onSelectQuery }) {
 
           {/* Search Input for Leaves */}
           <div className="relative">
-            <Search className="w-4 h-4 text-slate-500 absolute left-4 top-3.5" />
+            <Search className="w-4 h-4 text-[#FAF5E9]/50 absolute left-4 top-3.5" />
             <input
               type="text"
               value={filterPrefix}
               onChange={(e) => setFilterPrefix(e.target.value)}
               placeholder="Filter Trie registered paths (e.g., 'Nova Compute', 'Spawn', 'Claims')..."
-              className="w-full bg-navy-900/80 border border-white/10 rounded-2xl pl-11 pr-5 py-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 shadow-inner"
+              className="w-full bg-[#09160e]/90 border border-[#009B4D]/30 rounded-2xl pl-11 pr-5 py-3 text-xs text-[#FAF5E9] placeholder-[#FAF5E9]/50 focus:outline-none focus:border-[#009B4D] shadow-inner"
             />
           </div>
 
@@ -205,26 +206,26 @@ export default function StairExplorerView({ onSelectQuery }) {
             {filteredLeaves.map((leaf, idx) => (
               <div
                 key={idx}
-                className="glass-card p-5 border border-white/10 hover:border-blue-500/40 transition-all rounded-3xl shadow-lg space-y-3 bg-navy-900/70"
+                className="p-5 border border-[#009B4D]/25 hover:border-[#009B4D]/60 transition-all rounded-3xl shadow-lg space-y-3 bg-[#09160e]/80"
               >
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-cyan-300 flex items-center">
-                    <FileCode className="w-4 h-4 mr-2 text-cyan-400 flex-shrink-0" />
-                    <span className="truncate">{leaf.segment}</span>
+                  <span className="font-semibold text-[#009B4D] flex items-center">
+                    <FileCode className="w-4 h-4 mr-2 text-[#009B4D] flex-shrink-0" />
+                    <span className="truncate text-[#FAF5E9]">{leaf.segment}</span>
                   </span>
-                  <span className="bg-blue-950/80 text-blue-300 border border-blue-800 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold flex-shrink-0">
+                  <span className="bg-[#0d2015] text-[#FFCC00] border border-[#FFCC00]/40 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold flex-shrink-0">
                     VALID LEAF
                   </span>
                 </div>
 
-                <div className="text-[11px] font-mono text-slate-300 bg-navy-950 p-3.5 rounded-2xl border border-white/5 break-all select-all leading-relaxed">
+                <div className="text-[11px] font-mono text-[#FAF5E9] bg-[#050d08] p-3.5 rounded-2xl border border-[#009B4D]/20 break-all select-all leading-relaxed">
                   {leaf.path}
                 </div>
 
                 {leaf.metadata?.title && (
-                  <div className="text-[11px] text-slate-400 flex justify-between items-center pt-1.5 border-t border-white/5">
-                    <span>Runbook: <span className="text-slate-200 font-medium">{leaf.metadata.title}</span></span>
-                    <span className="text-[10px] text-slate-500 font-mono">{leaf.section_id}</span>
+                  <div className="text-[11px] text-[#FAF5E9]/60 flex justify-between items-center pt-1.5 border-t border-[#009B4D]/15">
+                    <span>Runbook: <span className="text-[#FAF5E9] font-medium">{leaf.metadata.title}</span></span>
+                    <span className="text-[10px] text-[#FFCC00] font-mono">{leaf.section_id}</span>
                   </div>
                 )}
               </div>
