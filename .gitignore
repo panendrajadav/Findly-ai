@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.cache/
+*.log
+findly_local.db
+data/
+frontend/node_modules/
+frontend/.vite/
+.env
