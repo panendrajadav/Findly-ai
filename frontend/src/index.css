@@ -3,30 +3,30 @@
 @tailwind utilities;
 
 :root {
-  --bg-primary: #06080d;
-  --bg-surface: #0c1017;
-  --bg-card: rgba(14, 19, 28, 0.75);
+  --bg-primary: #060913;
+  --bg-surface: #0a0f1d;
+  --bg-card: rgba(15, 23, 42, 0.75);
   --border-subtle: rgba(255, 255, 255, 0.08);
-  --accent-emerald: #10b981;
-  --accent-green: #059669;
-  --accent-mint: #34d399;
+  --accent-electric: #3b82f6;
+  --accent-cyan: #06b6d4;
+  --accent-violet: #8b5cf6;
 }
 
 body {
   margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--bg-primary);
   background-image: 
-    radial-gradient(circle at 50% -10%, rgba(16, 185, 129, 0.12) 0%, transparent 55%),
-    radial-gradient(circle at 90% 70%, rgba(5, 150, 105, 0.05) 0%, transparent 45%),
-    radial-gradient(circle at 10% 85%, rgba(52, 211, 153, 0.04) 0%, transparent 45%);
+    radial-gradient(circle at 50% -10%, rgba(37, 99, 235, 0.12) 0%, transparent 60%),
+    radial-gradient(circle at 85% 65%, rgba(6, 182, 212, 0.06) 0%, transparent 45%),
+    radial-gradient(circle at 15% 85%, rgba(139, 92, 246, 0.05) 0%, transparent 45%);
   color: #f1f5f9;
   min-height: 100vh;
   overflow-x: hidden;
 }
 
 code, pre {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
 /* Custom Scrollbar */
@@ -38,78 +38,59 @@ code, pre {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(16, 185, 129, 0.6);
+  background: rgba(59, 130, 246, 0.5);
 }
 
-/* Glass Panels with Emerald Green Aura */
+/* Glass Panels with Electric Blue & Cyan Aura */
 .glass-panel {
-  background: rgba(12, 16, 24, 0.75);
+  background: rgba(11, 17, 32, 0.82);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 20px;
+  border-radius: 18px;
 }
 
 .glass-card {
-  background: rgba(14, 19, 28, 0.7);
+  background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 22px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 20px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card:hover {
-  border-color: rgba(16, 185, 129, 0.35);
-  box-shadow: 0 12px 35px -10px rgba(16, 185, 129, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 10px 30px -8px rgba(37, 99, 235, 0.18);
 }
 
-/* Glowing Ambient Floating Orbs */
-.glow-orb {
+/* Subtle Ambient Glows */
+.ambient-glow-blue {
   position: absolute;
   border-radius: 50%;
-  filter: blur(70px);
+  filter: blur(80px);
   pointer-events: none;
-  z-index: 0;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
 }
 
-.glow-orb-emerald {
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, rgba(5, 150, 105, 0) 70%);
+.ambient-glow-cyan {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%);
 }
 
-.glow-orb-mint {
-  background: radial-gradient(circle, rgba(52, 211, 153, 0.18) 0%, rgba(16, 185, 129, 0) 70%);
-}
-
-/* Float Animations */
-@keyframes floatSlow {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-12px) rotate(1.5deg);
-  }
-}
-
-@keyframes floatReverse {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(10px) rotate(-1.5deg);
-  }
-}
-
-.animate-float-slow {
-  animation: floatSlow 8s ease-in-out infinite;
-}
-
-.animate-float-reverse {
-  animation: floatReverse 9s ease-in-out infinite;
+.ambient-glow-violet {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
 }
 
 /* Markdown Rendering Engine Styling */
@@ -122,8 +103,8 @@ code, pre {
 .markdown-content h3 {
   color: #ffffff;
   font-weight: 700;
-  margin-top: 1.5rem;
-  margin-bottom: 0.6rem;
+  margin-top: 1.4rem;
+  margin-bottom: 0.5rem;
   letter-spacing: -0.015em;
 }
 
@@ -133,9 +114,9 @@ code, pre {
 .markdown-content h4 { 
   font-size: 0.95rem; 
   font-weight: 600; 
-  color: #10b981; 
-  margin-top: 1.25rem; 
-  margin-bottom: 0.4rem; 
+  color: #38bdf8; 
+  margin-top: 1.2rem; 
+  margin-bottom: 0.35rem; 
 }
 
 .markdown-content p {
@@ -168,19 +149,19 @@ code, pre {
 }
 
 .markdown-content blockquote {
-  border-left: 3px solid #10b981;
+  border-left: 3px solid #3b82f6;
   padding-left: 1rem;
   margin: 0.85rem 0;
-  color: #a7f3d0;
-  background: rgba(16, 185, 129, 0.08);
+  color: #bae6fd;
+  background: rgba(59, 130, 246, 0.08);
   border-radius: 0 10px 10px 0;
   padding-top: 0.4rem;
   padding-bottom: 0.4rem;
 }
 
 .markdown-content code {
-  background: rgba(10, 14, 22, 0.85);
-  color: #34d399;
+  background: rgba(15, 23, 42, 0.9);
+  color: #38bdf8;
   padding: 0.2rem 0.45rem;
   border-radius: 6px;
   font-size: 0.82em;
@@ -188,9 +169,9 @@ code, pre {
 }
 
 .markdown-content pre {
-  background: #080b11;
+  background: #090e1a;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 1rem;
   overflow-x: auto;
   margin: 0.85rem 0;
@@ -198,7 +179,7 @@ code, pre {
 
 .markdown-content pre code {
   background: transparent;
-  color: #6ee7b7;
+  color: #93c5fd;
   padding: 0;
   border: none;
   font-size: 0.84rem;
@@ -212,7 +193,7 @@ code, pre {
 }
 
 .markdown-content th {
-  background: rgba(12, 16, 24, 0.9);
+  background: rgba(15, 23, 42, 0.95);
   color: #94a3b8;
   text-align: left;
   padding: 0.65rem 0.85rem;
@@ -229,5 +210,15 @@ code, pre {
 }
 
 .markdown-content tr:hover {
-  background: rgba(16, 185, 129, 0.04);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
