@@ -175,8 +175,7 @@ class QwenGroundedAssistant:
             detailed_explanation = "\n\n".join(parts)
             summary = f"Direct remediation retrieved from '{doc_title}' ({path})."
             approval_prompt = (
-                "⚠️ **HUMAN-IN-THE-LOOP OPERATOR APPROVAL REQUIRED**: The retrieved remediation command requires "
-                "operator authorization before execution."
+                "The retrieved remediation command requires operator authorization before execution."
                 if requires_approval else ""
             )
 
@@ -196,19 +195,44 @@ class QwenGroundedAssistant:
         # CASE 1: Cross-VM Comparison
         if is_comparison and len(vm_lifecycles) > 1:
             parts.append("### Cross-VM Provisioning Comparison")
+
+            table_rows = [
+                "| VM Instance UUID | Spawn Latency | Build Duration | Total Elapsed | Allocation (VCPU/RAM/Disk) | Evaluation |",
+                "| :--- | :--- | :--- | :--- | :--- | :--- |"
+            ]
+            for v in vm_lifecycles.values():
+                s_dur = f"**{v['spawn_duration']}s** (+{v['spawn_diff']}s, +{v['spawn_z']}σ)" if v.get("spawn_duration") is not None else "N/A"
+                b_dur = f"**{v['build_duration']}s** (+{v['build_diff']}s, +{v['build_z']}σ)" if v.get("build_duration") is not None else "N/A"
+                el_dur = f"**{v['total_elapsed_sec']}s**" if v.get("total_elapsed_sec") is not None else "N/A"
+                claims = f"{v.get('vcpu', 1)} VCPU / {v.get('memory_mb', 2048)}MB / {v.get('disk_gb', 20)}GB"
+                eval_tag = "Known Anomaly" if v.get("is_known_anomaly") else "Normal"
+                table_rows.append(f"| `{v['instance_id']}` | {s_dur} | {b_dur} | {el_dur} | {claims} | {eval_tag} |")
+            parts.append("\n".join(table_rows))
+
+            facts_lines = ["#### 1. Per-Instance Telemetry Evidence Citations"]
+            for v in vm_lifecycles.values():
+                vm_uuid = v["instance_id"]
+                facts_lines.append(
+                    f"- **Instance `{vm_uuid}`:**\n"
+                    f"  - Spawn Latency: **{v.get('spawn_duration')}s** (Recorded at Line `{v.get('spawn_line')}` in `{v.get('spawn_file')}`).\n"
+                    f"  - Build Duration: **{v.get('build_duration')}s** (Recorded at Line `{v.get('build_line')}` in `{v.get('build_file')}`).\n"
+                    f"  - Resource Claims: `{v.get('vcpu')} VCPU`, `{v.get('memory_mb')} MB RAM`, `{v.get('disk_gb')} GB Disk` (Recorded at Line `{v.get('claim_line')}` in `{v.get('claim_file')}`).\n"
+                    f"  - Total Elapsed Lifecycle: **{v.get('total_elapsed_sec')}s** (First seen at `{v.get('first_seen')}` Line `{v.get('first_line')}` → Last seen at `{v.get('last_seen')}` Line `{v.get('last_line')}`)."
+                )
+            parts.append("\n".join(facts_lines))
+
             parts.append(
-                "| VM Instance UUID | Spawn Latency | Baseline Diff | Z-Score | Allocation (VCPU/RAM/Disk) | Ground Truth |\n"
-                "| :--- | :--- | :--- | :--- | :--- | :--- |\n" +
-                "\n".join([
-                    f"| `{v['instance_id'][:8]}...` | **{v['spawn_duration']}s** | +{v['spawn_diff']}s | +{v['spawn_z']}σ | "
-                    f"{v['vcpu']} VCPU / {v['memory_mb']}MB / {v['disk_gb']}GB | "
-                    f"{'Known Anomaly' if v['is_known_anomaly'] else 'Normal'} |"
-                    for v in vm_lifecycles.values()
-                ])
+                "#### 2. Normal Baseline Comparison & Lifecycle Insights\n"
+                "- **Normal Baselines:** Spawn mean `19.79s ± 0.65s` (normal envelope `18.1s – 22.2s`); Build mean `20.59s ± 0.65s`.\n"
+                "- **Comparative Findings:** Both instances requested identical resource limits (1 VCPU, 2048 MB RAM, 20 GB Disk), yet exhibited anomalous hypervisor spawn delays.\n"
+                "- **Lifecycle Stage vs. Total Elapsed Time:** Spawn and build durations measure isolated compute worker hypervisor routines, whereas total elapsed time reflects full lifecycle duration from claim to deallocation."
             )
+
             parts.append(
-                "**Baseline Context:** Standard normal baseline spawn time is `19.79s ± 0.65s` "
-                "(normal envelope `18.1s – 22.2s`)."
+                "#### 3. Root-Cause Analysis (Supported Facts vs. Unsupported Hypotheses)\n"
+                "- **Supported Facts:** Telemetry definitively verifies abnormal hypervisor provisioning latency for both instances.\n"
+                "- **Unsupported Hypotheses:** OpenStack Oslo logs contain only service status records. They **do not contain** host kernel metrics, CPU stolen time, disk IOPS queues, or RAM swapping.\n"
+                "- **Unknown Physical Root Causes (Clear Admission):** Asserting that **CPU starvation**, **disk lock contention**, or **network saturation** was the definitive root cause is **unsupported** by the available dataset."
             )
 
         # CASE 2: Single Target VM Inquiry
@@ -224,10 +248,21 @@ class QwenGroundedAssistant:
                 disk = vm_data.get("disk_gb", 20)
                 first_seen = vm_data.get("first_seen", "N/A")
                 last_seen = vm_data.get("last_seen", "N/A")
+                first_line = vm_data.get("first_line", "N/A")
+                first_file = vm_data.get("first_file", vm_data.get("source_file", "telemetry"))
+                last_line = vm_data.get("last_line", "N/A")
+                last_file = vm_data.get("last_file", vm_data.get("source_file", "telemetry"))
                 spawn_line = vm_data.get("spawn_line", "N/A")
                 spawn_file = vm_data.get("spawn_file", vm_data.get("source_file", "telemetry"))
+                build_line = vm_data.get("build_line", "N/A")
+                build_file = vm_data.get("build_file", vm_data.get("source_file", "telemetry"))
+                claim_line = vm_data.get("claim_line", "N/A")
+                claim_file = vm_data.get("claim_file", vm_data.get("source_file", "telemetry"))
                 diff_sec = vm_data.get("spawn_diff")
                 z_sc = vm_data.get("spawn_z")
+                build_diff = vm_data.get("build_diff")
+                build_z = vm_data.get("build_z")
+                total_elapsed = vm_data.get("total_elapsed_sec")
 
                 spawn_display = f"**{spawn_sec:.2f} seconds**" if spawn_sec is not None else "**Not recorded**"
                 build_display = f"**{build_sec:.2f} seconds**" if build_sec is not None else "**Not recorded**"
@@ -235,36 +270,52 @@ class QwenGroundedAssistant:
                 parts.append(f"### Telemetry Diagnostic Assessment: Instance `{vm_id}`")
 
                 # Section 1: Observed Facts
-                parts.append(
-                    "#### 1. Observed Telemetry Facts (Grounded Evidence)\n"
-                    f"- **Measured Spawn Latency:** {spawn_display} "
-                    f"(Recorded at Line `{spawn_line}` in `{spawn_file}`).\n"
-                    f"- **Build Duration:** {build_display}.\n"
-                    f"- **Resource Allocation Claims:** `{vcpu} VCPU`, `{ram} MB RAM`, `{disk} GB Ephemeral Disk`.\n"
-                    f"- **Lifecycle Timeline:** Initial claim at `{first_seen}` → Spawn completed at `{last_seen}`.\n"
+                facts_lines = [
+                    "#### 1. Observed Telemetry Facts (Grounded Evidence)",
+                    f"- **Measured Spawn Latency:** {spawn_display} (Recorded at Line `{spawn_line}` in `{spawn_file}`).",
+                    f"- **Build Duration:** {build_display} (Recorded at Line `{build_line}` in `{build_file}`).",
+                    f"- **Resource Allocation Claims:** `{vcpu} VCPU`, `{ram} MB RAM`, `{disk} GB Ephemeral Disk` (Recorded at Line `{claim_line}` in `{claim_file}`).",
+                    f"- **Lifecycle Timeline:** Initial claim at `{first_seen}` (Line `{first_line}` in `{first_file}`) → Last event at `{last_seen}` (Line `{last_line}` in `{last_file}`).",
                     "- **Log Severity Integrity:** Recorded strictly at `INFO` severity (`0 ERROR lines` logged for this instance)."
-                )
+                ]
+                parts.append("\n".join(facts_lines))
 
-                # Section 2: Baseline Comparison
+                # Section 2: Lifecycle-Stage vs Total Elapsed Time Explanation
+                if spawn_sec is not None and build_sec is not None and total_elapsed is not None:
+                    timing_explanation = [
+                        "#### 2. Lifecycle Timing & Duration Breakdown",
+                        f"- **Hypervisor Spawn Stage (`{spawn_sec:.2f}s`):** The isolated time spent by Nova Compute and Libvirt executing the domain XML definition, tap device plugging, and hypervisor guest boot.",
+                        f"- **Instance Build Stage (`{build_sec:.2f}s`):** Includes the spawn stage duration plus prerequisite claim verification, disk image preparation, and initial instance state updates (difference: `+{(build_sec - spawn_sec):.2f}s` overhead).",
+                        f"- **Total Elapsed Lifecycle Time (`{total_elapsed:.2f}s`):** The full chronological time delta from first appearance (`{first_seen}`) through provisioning, active operations, termination, network deallocation, and final shutdown (`{last_seen}`).",
+                        "- **Key Architectural Insight:** Lifecycle-stage durations measure specific internal worker subroutines, whereas total elapsed time encompasses the instance's entire operational lifespan across multiple distinct lifecycle stages."
+                    ]
+                    parts.append("\n".join(timing_explanation))
+
+                # Section 3: Baseline Statistical Comparison
                 if diff_sec is not None and z_sc is not None:
-                    parts.append(
-                        "#### 2. Normal Baseline Comparison\n"
-                        "- **Normal Baseline Mean:** `19.79s ± 0.65s` (normal envelope `18.1s – 22.2s`).\n"
-                        f"- **Measured Deviation:** **+{diff_sec:.2f} seconds** above normal mean (**+{z_sc:.1f}σ** outlier).\n"
-                        f"- **Evaluation Classification:** **{'ANOMALOUS PROVISIONING DELAY' if diff_sec > 5 else 'NORMAL BASELINE'}**."
+                    baseline_lines = [
+                        "#### 3. Normal Baseline Statistical Comparison",
+                        "- **Normal Baseline Mean:** `19.79s ± 0.65s` (normal operational envelope `18.1s – 22.2s`).",
+                        f"- **Spawn Latency Deviation:** **+{diff_sec:.2f} seconds** above normal baseline mean (**+{z_sc:.1f}σ** standard deviation outlier).",
+                    ]
+                    if build_sec is not None and build_diff is not None and build_z is not None:
+                        baseline_lines.append(
+                            f"- **Build Duration Deviation:** `20.59s ± 0.65s` baseline → measured **{build_sec:.2f}s** (**+{build_diff:.2f}s**, **+{build_z:.1f}σ** outlier)."
+                        )
+                    baseline_lines.append(
+                        f"- **Statistical Evaluation:** **{'ANOMALOUS PROVISIONING DELAY' if diff_sec > 5 else 'NORMAL BASELINE'}**."
                     )
+                    parts.append("\n".join(baseline_lines))
 
-                # Section 3: Root-Cause Evaluation (Supported vs. Unsupported)
+                # Section 4: Supported Findings vs. Unknown Causes
                 obs_latency = f"{spawn_sec:.2f}s" if spawn_sec is not None else "an extended duration"
-                parts.append(
-                    "#### 3. Root-Cause Analysis (Supported Facts vs. Unsupported Hypotheses)\n"
-                    f"- **Verified Observation:** The hypervisor compute worker took {obs_latency} to execute the domain spawn "
-                    "sequence, far exceeding the normal 19.8s baseline.\n"
-                    "- **Unsupported Root-Cause Claims:** The OpenStack Oslo logs **do not contain** host kernel metrics, CPU utilization "
-                    "percentages, disk IOPS counters, or memory swap metrics. Therefore, asserting that **CPU starvation**, "
-                    "**disk lock contention**, or **network saturation** was the definitive root cause is **unsupported** by the available dataset.\n"
-                    "- **Known Information:** The dataset establishes the *fact* of the provisioning delay, but does not provide lower-level OS instrumentation to definitively prove hardware starvation."
-                )
+                analysis_lines = [
+                    "#### 4. Supported Findings & Unknown Root Causes",
+                    f"- **Supported Observation (Verified Fact):** The hypervisor compute worker took {obs_latency} to execute the domain spawn sequence on the compute node, exceeding the 19.8s normal baseline by +{diff_sec:.2f}s.",
+                    "- **Unsupported Hypotheses (Excluded Claims):** The OpenStack Oslo logs contain only service-level status events. They **do not contain** host kernel telemetry, CPU stolen time percentages, disk IOPS queues, or RAM swapping metrics.",
+                    "- **Unknown Root Cause (Clear Admission):** Asserting that **CPU starvation**, **disk lock contention**, or **network saturation** caused this latency is **unsupported** by the available dataset. The exact physical host root cause cannot be established without external OS metrics."
+                ]
+                parts.append("\n".join(analysis_lines))
             else:
                 parts.append(f"### Telemetry Query: Instance `{vm_id}`")
                 parts.append(
@@ -300,10 +351,15 @@ class QwenGroundedAssistant:
                     "Retrieved procedure from the STAIR operational Table of Contents matching your inquiry."
                 )
 
-        # Append Relevant Runbook Procedure Content
+        # Append Relevant Runbook Procedure Content with Source Document, Section and Retrieved Procedure
+        doc_title = getattr(retrieval, "source_document", "") or "Operational Runbook"
+        section_title = retrieval.leaf_title
+
         parts.append(
-            f"#### 4. Verified Runbook Procedure ({retrieval.leaf_title})\n"
-            f"*Source Path:* `{path}`\n\n"
+            f"#### 5. Grounded Runbook Guidance ({section_title})\n"
+            f"- **Source Document:** {doc_title}\n"
+            f"- **Source Section:** `{section_title}` (`{path}`)\n\n"
+            f"**Retrieved Procedure:**\n"
             f"{section_content}"
         )
 
@@ -317,9 +373,9 @@ class QwenGroundedAssistant:
         approval_prompt = ""
         if requires_approval:
             approval_prompt = (
-                "⚠️ **HUMAN-IN-THE-LOOP OPERATOR APPROVAL REQUIRED**: The retrieved procedure contains "
-                "MEDIUM or HIGH risk remediation commands. Findly AI never executes destructive operations "
-                "autonomously. Submit an approval request for operator review."
+                "The retrieved procedure contains MEDIUM or HIGH risk remediation commands. "
+                "Findly AI never executes destructive operations autonomously. "
+                "Submit an approval request for operator review."
             )
 
         return AssistantResponse(

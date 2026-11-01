@@ -40,23 +40,39 @@ export default function ChatView() {
     },
     {
       title: "Cross-VM Latency Comparison",
-      desc: "Compare measured provisioning duration between VM 544fd51c and VM ae651dff.",
+      desc: "Compare measured provisioning duration and baseline deviation between anomalous VMs.",
       icon: Cpu,
-      query: "Compare VM 544fd51c-4edc-4780-baae-ba1d80a0acfc vs ae651dff-c7ad-43d6-ac96-bbcd820ccca8",
+      query: "Compare these two VMs.",
     },
     {
       title: "Resource Claims Verification",
       desc: "What resource limits, vCPU, and memory claims were placed for instance ae651dff?",
       icon: ShieldCheck,
-      query: "What resource limits and claims were placed for instance ae651dff-c7ad-43d6-ac96-bbcd820ccca8?",
+      query: "What resource claims were placed for VM ae651dff-c7ad-43d6-ac96-bbcd820ccca8?",
     },
     {
       title: "Compute Service Remediation",
       desc: "Retrieve verified operational runbook commands to restart stuck compute threads.",
       icon: Terminal,
-      query: "What remediation commands restart the nova-compute service?",
+      query: "What commands restart nova-compute?",
     },
   ];
+
+  const suggestionChips = [
+    "What resource claims were placed for VM ae651dff-c7ad-43d6-ac96-bbcd820ccca8?",
+    "Why did VM 544fd51c-4edc-4780-baae-ba1d80a0acfc take over 40 seconds to spawn?",
+    "Compare these two VMs.",
+    "What commands restart nova-compute?",
+  ];
+
+  const cleanApprovalPrompt = (prompt) => {
+    if (!prompt) return '';
+    return prompt
+      .replace(/⚠️\s*/g, '')
+      .replace(/\*\*/g, '')
+      .replace(/HUMAN-IN-THE-LOOP OPERATOR APPROVAL REQUIRED:\s*/i, '')
+      .trim();
+  };
 
   const handleSend = (textToSend) => {
     const q = textToSend || query;
@@ -145,8 +161,15 @@ export default function ChatView() {
         {/* Welcome Hero State (When no messages yet) matching the uploaded reference design */}
         {messages.length === 0 ? (
           <div className="my-auto py-12 flex flex-col items-center text-center">
+            {/* Glossy 3D Glowing Orb Accent */}
+            <div className="relative mb-6">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-600 via-emerald-400 to-teal-200 shadow-[0_0_40px_rgba(16,185,129,0.5)] flex items-center justify-center">
+                <div className="w-6 h-6 rounded-full bg-white/30 blur-[2px] -translate-x-1 -translate-y-1"></div>
+              </div>
+            </div>
+
             {/* Status Pill Badge */}
-            <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#0d121c] border border-emerald-500/30 text-emerald-300 text-xs font-mono mb-8 shadow-lg shadow-emerald-950/40">
+            <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#0d121c] border border-emerald-500/30 text-emerald-300 text-xs font-mono mb-6 shadow-lg shadow-emerald-950/40">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               <span>STAIR ENGINE v2.4 READY • 33,434 OpenStack Telemetry Lines Synced</span>
             </div>
@@ -244,11 +267,13 @@ export default function ChatView() {
 
                       {/* Human-in-the-Loop Operator Warning Banner */}
                       {m.requires_approval && (
-                        <div className="p-4 rounded-2xl bg-amber-950/50 border border-amber-600/80 text-amber-200 text-xs flex items-start space-x-3.5 shadow-md">
+                        <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-500/40 text-amber-200 text-xs flex items-start space-x-3.5 shadow-md">
                           <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
-                          <div>
-                            <div className="font-bold text-amber-300 text-sm">Operator Approval Required</div>
-                            <div className="mt-1 leading-relaxed">{m.approval_prompt}</div>
+                          <div className="space-y-1">
+                            <div className="font-semibold text-amber-300 text-sm tracking-wide">Operator Approval Required</div>
+                            <div className="text-amber-200/90 leading-relaxed font-sans">
+                              {cleanApprovalPrompt(m.approval_prompt) || 'The retrieved remediation procedure contains high-impact actions. Operator authorization is required prior to execution.'}
+                            </div>
                           </div>
                         </div>
                       )}
@@ -334,6 +359,19 @@ export default function ChatView() {
               </div>
             ))}
 
+            {/* Quick Suggestion Chips matching Image 2 */}
+            <div className="flex flex-wrap gap-2 pt-2 justify-start">
+              {suggestionChips.map((chip, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleSend(chip)}
+                  className="px-4 py-2 rounded-full bg-[#131722] hover:bg-[#1c2233] border border-white/10 hover:border-emerald-500/50 text-slate-300 hover:text-white text-xs transition-all shadow-sm flex items-center space-x-1.5"
+                >
+                  <span>{chip}</span>
+                </button>
+              ))}
+            </div>
+
             {loading && (
               <div className="flex items-center space-x-3 text-slate-400 text-xs p-4 glass-card w-fit rounded-2xl border border-white/10">
                 <div className="w-4 h-4 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin"></div>
@@ -348,8 +386,9 @@ export default function ChatView() {
       {/* Floating Bottom Capsule Input Bar with Emerald Accent */}
       <div className="relative z-10 pt-4 pb-2">
         <div className="glass-card p-2 rounded-full border border-white/10 flex items-center space-x-3 shadow-2xl bg-[#0b0f17]/90 backdrop-blur-2xl">
-          <div className="pl-4 text-slate-500">
-            <Terminal className="w-4 h-4 text-emerald-400" />
+          <div className="hidden sm:flex items-center space-x-1.5 bg-[#141925] px-3 py-1.5 rounded-full border border-white/10 text-emerald-300 text-[11px] font-mono flex-shrink-0">
+            <Radio className="w-3 h-3 text-emerald-400 animate-pulse" />
+            <span>openstack_abnormal.log</span>
           </div>
           <input
             type="text"
@@ -357,7 +396,7 @@ export default function ChatView() {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Ask about VM spawning latency, resource claims, runbooks, or remediation..."
-            className="flex-1 bg-transparent border-none text-sm text-white placeholder-slate-500 focus:outline-none"
+            className="flex-1 bg-transparent border-none text-sm text-white placeholder-slate-500 focus:outline-none pl-2"
           />
           <button
             onClick={() => handleSend()}
@@ -398,6 +437,15 @@ export default function ChatView() {
             />
             <span>Raw Log Citations</span>
           </label>
+        </div>
+
+        {/* Disclaimer footer matching reference Image 1 */}
+        <div className="flex justify-between items-center text-[10px] text-slate-500 pt-2 px-2">
+          <span>Note: Root-cause assertions require hardware kernel metrics. Unverified claims are flagged as unsupported.</span>
+          <span className="flex items-center space-x-1 text-emerald-400 font-mono">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <span>Telemetry verified</span>
+          </span>
         </div>
       </div>
     </div>

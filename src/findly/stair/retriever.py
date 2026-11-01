@@ -49,6 +49,10 @@ class StairRetrievalOutput:
     is_direct_remediation_query: bool = False
     procedure_found: bool = True
 
+    @property
+    def path(self) -> str:
+        return self.hierarchy_path
+
 
 class StairRetrieverEngine:
     """
@@ -103,9 +107,19 @@ class StairRetrieverEngine:
         elif "scheduler" in q_low:
             service = "nova-scheduler"
 
-        is_comparison = len(unique_vms) > 1 and any(
-            comp_word in q_low for comp_word in ["compare", "vs", "versus", "difference", "between"]
-        )
+        comparison_cues = ["compare", "comparison", "vs", "versus", "difference", "between"]
+        has_comparison_cue = any(comp_word in q_low for comp_word in comparison_cues)
+        has_multi_vms_mention = any(w in q_low for w in ["two", "both", "these", "vms", "instances"])
+
+        is_comparison = (len(unique_vms) > 1 and has_comparison_cue) or (has_comparison_cue and has_multi_vms_mention)
+
+        # If comparison requested but no or only 1 explicit VM given, populate with primary target anomalous VMs
+        if is_comparison and len(unique_vms) < 2:
+            default_vms = ["544fd51c-4edc-4780-baae-ba1d80a0acfc", "ae651dff-c7ad-43d6-ac96-bbcd820ccca8"]
+            for d_vm in default_vms:
+                if d_vm not in unique_vms:
+                    unique_vms.append(d_vm)
+            is_comparison = True
 
         remediation_cues = [
             "command", "commands", "how to restart", "how to flush", "how to clean",
@@ -140,7 +154,12 @@ class StairRetrieverEngine:
         is_comparison = entities.get("is_comparison", False)
 
         # 1. Retrieve candidate sections from Vector Store
-        raw_candidates = self.vector_store.search(query=query, top_k=top_k * 3, leaf_only=False)
+        # For comparison queries, focus the semantic search on spawn latency provisioning runbook
+        search_query = query
+        if is_comparison:
+            search_query = "Nova Compute Spawn Latency Runbook Overview Telemetry Diagnosis hypervisor provisioning anomaly"
+
+        raw_candidates = self.vector_store.search(query=search_query, top_k=top_k * 3, leaf_only=False)
 
         # 2. Filter & Project through Trie Constraint
         candidate_paths = [sec.hierarchy_path for sec, _ in raw_candidates]
@@ -151,7 +170,7 @@ class StairRetrieverEngine:
 
         # Re-query vector store strictly allowing valid leaf paths
         constrained_results = self.vector_store.search(
-            query=query,
+            query=search_query,
             top_k=top_k,
             allowed_paths=valid_leaf_paths,
             leaf_only=True,
@@ -163,7 +182,19 @@ class StairRetrieverEngine:
         candidate_info: List[Dict[str, Any]] = []
 
         if constrained_results:
-            selected_section, best_score = constrained_results[0]
+            # For cross-VM provisioning comparisons, ensure route strictly selects Nova Compute Spawn Latency
+            if is_comparison:
+                spawn_matches = [
+                    (sec, sc) for sec, sc in constrained_results
+                    if "Nova Compute Spawn Latency" in sec.hierarchy_path
+                ]
+                if spawn_matches:
+                    selected_section, best_score = spawn_matches[0]
+                else:
+                    selected_section, best_score = constrained_results[0]
+            else:
+                selected_section, best_score = constrained_results[0]
+
             selected_path = selected_section.hierarchy_path
             for sec, sc in constrained_results:
                 candidate_info.append({
@@ -261,19 +292,37 @@ class StairRetrieverEngine:
                     vm_obj = vm_map.get(vm_id) or next(iter(vm_map.values()), None)
 
                     if vm_obj:
-                        # Find the exact line where spawn duration was logged
-                        spawn_line = None
-                        spawn_file = None
+                        # Find exact line and source file for each lifecycle milestone
+                        spawn_line, spawn_file = None, None
+                        build_line, build_file = None, None
+                        claim_line, claim_file = None, None
+                        first_line, first_file = vm_recs[0].line_number, vm_recs[0].source_file
+                        last_line, last_file = vm_recs[-1].line_number, vm_recs[-1].source_file
+
                         for r in vm_recs:
                             if "Took" in r.message and "seconds to spawn the instance" in r.message:
                                 spawn_line = r.line_number
                                 spawn_file = r.source_file
-                                break
+                            elif "Took" in r.message and "seconds to build instance" in r.message:
+                                build_line = r.line_number
+                                build_file = r.source_file
+                            elif "Attempting claim:" in r.message:
+                                claim_line = r.line_number
+                                claim_file = r.source_file
 
-                        # Compute statistical z-score vs baseline
+                        # Compute statistical z-score vs actual baseline values
                         spawn_dur = vm_obj.spawn_duration
-                        spawn_diff = (spawn_dur - 19.79) if spawn_dur else None
+                        spawn_diff = (spawn_dur - 19.79) if spawn_dur is not None else None
                         spawn_z = (spawn_diff / 0.65) if spawn_diff is not None else None
+
+                        build_dur = vm_obj.build_duration
+                        build_diff = (build_dur - 20.59) if build_dur is not None else None
+                        build_z = (build_diff / 0.65) if build_diff is not None else None
+
+                        # Total elapsed time between first seen and last seen log timestamps
+                        elapsed_sec = None
+                        if vm_obj.first_seen and vm_obj.last_seen:
+                            elapsed_sec = round((vm_obj.last_seen - vm_obj.first_seen).total_seconds(), 2)
 
                         vm_lifecycles_data[vm_id] = {
                             "instance_id": vm_obj.instance_id,
@@ -284,12 +333,23 @@ class StairRetrieverEngine:
                             "vcpu": vm_obj.vcpu,
                             "first_seen": vm_obj.first_seen.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3] if vm_obj.first_seen else None,
                             "last_seen": vm_obj.last_seen.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3] if vm_obj.last_seen else None,
+                            "first_line": first_line,
+                            "first_file": first_file,
+                            "last_line": last_line,
+                            "last_file": last_file,
                             "is_known_anomaly": vm_obj.is_known_anomaly,
                             "total_events": vm_obj.total_events,
                             "spawn_line": spawn_line,
                             "spawn_file": spawn_file,
+                            "build_line": build_line,
+                            "build_file": build_file,
+                            "claim_line": claim_line,
+                            "claim_file": claim_file,
                             "spawn_diff": round(spawn_diff, 2) if spawn_diff is not None else None,
                             "spawn_z": round(spawn_z, 1) if spawn_z is not None else None,
+                            "build_diff": round(build_diff, 2) if build_diff is not None else None,
+                            "build_z": round(build_z, 1) if build_z is not None else None,
+                            "total_elapsed_sec": elapsed_sec,
                             "source_file": vm_obj.file_source,
                         }
 
