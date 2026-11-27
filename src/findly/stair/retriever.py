@@ -30,6 +30,55 @@ BASH_COMMAND_RE = re.compile(r"```bash\s*\n(.*?)\n```", re.DOTALL)
 
 # Minimum similarity for a non-VM question to be answered from a runbook section.
 MIN_RELEVANCE_SCORE = 0.05
+# Below this similarity a match is shown as "closest section" and risky commands are withheld.
+LOW_CONFIDENCE_SCORE = 0.25
+
+RISK_LEVEL_RE = re.compile(r"Risk Level:\s*\*{0,2}\s*(LOW|MEDIUM|HIGH|CRITICAL)", re.IGNORECASE)
+DESTRUCTIVE_RE = re.compile(
+    r"\b(delete|destroy|terminate|wipe|purge|drop|kill|erase|remove)\b.*"
+    r"\b(all|every|everything|instances|vms|servers|hosts|database|tenants?|projects?)\b",
+    re.IGNORECASE,
+)
+LISTING_CUE_RE = re.compile(r"\b(which|what|list|show|any|how many|all|top|slowest|find)\b", re.IGNORECASE)
+ANOMALY_CUE_RE = re.compile(r"anomal|outlier|abnormal|incident|slow|problem|unhealthy|flagged", re.IGNORECASE)
+TARGET_CUE_RE = re.compile(r"\b(vms?|instances?|servers?|machines?|anomalies|incidents|outliers)\b", re.IGNORECASE)
+
+
+_STOPWORDS = {
+    "a", "an", "the", "is", "are", "was", "were", "be", "to", "of", "in", "on", "for", "and", "or",
+    "it", "this", "that", "my", "me", "i", "do", "does", "did", "how", "what", "which", "why", "when",
+    "where", "who", "can", "could", "should", "would", "with", "from", "at", "by", "there", "any",
+    "command", "commands", "procedure", "runbook", "fix", "resolve", "openstack", "nova", "compute",
+    "host", "node", "server", "service", "system", "issue", "error", "errors", "problem",
+}
+
+
+def term_coverage(query: str, section: DocumentSection) -> float:
+    """Share of the query's content words found in the section (5-char prefix match)."""
+    words = {w for w in re.findall(r"[a-z][a-z0-9_\-]+", query.lower()) if w not in _STOPWORDS and len(w) > 2}
+    if not words:
+        return 1.0
+    text = f"{section.title} {section.hierarchy_path} {section.content}".lower()
+    tokens = set(re.findall(r"[a-z][a-z0-9_\-]+", text))
+    prefixes = {t[:5] for t in tokens}
+    hits = sum(1 for w in words if w in tokens or w[:5] in prefixes)
+    return hits / len(words)
+
+
+def parse_command_risks(content: str) -> Dict[str, str]:
+    """Map each bash command line to the 'Risk Level' stated after its code block."""
+    risks: Dict[str, str] = {}
+    blocks = list(BASH_COMMAND_RE.finditer(content))
+    for i, m in enumerate(blocks):
+        tail_end = blocks[i + 1].start() if i + 1 < len(blocks) else len(content)
+        found = RISK_LEVEL_RE.search(content, m.end(), tail_end)
+        if not found:
+            continue
+        for line in m.group(1).splitlines():
+            line = line.strip()
+            if line and not line.startswith("#"):
+                risks[line] = found.group(1).upper()
+    return risks
 
 
 @dataclass
@@ -51,6 +100,13 @@ class StairRetrievalOutput:
     source_document: str = ""
     is_direct_remediation_query: bool = False
     procedure_found: bool = True
+    # Per-command risk taken from the runbook's own "Risk Level" lines
+    command_risks: Dict[str, str] = field(default_factory=dict)
+    # Weak match: shown as "closest section", risky commands withheld
+    low_confidence: bool = False
+    # "runbook" | "anomaly_listing" | "destructive_refused"
+    intent: str = "runbook"
+    anomalies: List[Dict[str, Any]] = field(default_factory=list)
 
     @property
     def path(self) -> str:
@@ -131,12 +187,23 @@ class StairRetrieverEngine:
         ]
         is_direct_remediation = any(cue in q_low for cue in remediation_cues) and len(unique_vms) == 0
 
+        is_anomaly_listing = (
+            not unique_vms
+            and not is_comparison
+            and bool(LISTING_CUE_RE.search(query))
+            and bool(ANOMALY_CUE_RE.search(query))
+            and bool(TARGET_CUE_RE.search(query))
+        )
+        is_destructive = bool(DESTRUCTIVE_RE.search(query))
+
         return {
             "vms": unique_vms,
             "request_ids": reqs,
             "service": service,
             "is_comparison": is_comparison,
-            "is_direct_remediation": is_direct_remediation,
+            "is_direct_remediation": is_direct_remediation and not is_anomaly_listing,
+            "is_anomaly_listing": is_anomaly_listing,
+            "is_destructive": is_destructive,
         }
 
     def retrieve(
@@ -155,6 +222,9 @@ class StairRetrieverEngine:
         entities = self.extract_entities(query)
         target_vms = entities.get("vms", [])
         is_comparison = entities.get("is_comparison", False)
+
+        if entities.get("is_anomaly_listing"):
+            return self._retrieve_anomaly_listing(query, entities, max_evidence_logs)
 
         # 1. Retrieve candidate sections from Vector Store
         # For comparison queries, focus the semantic search on spawn latency provisioning runbook
@@ -223,6 +293,18 @@ class StairRetrieverEngine:
 
         # Determine if procedure was genuinely found
         is_direct_rem = entities.get("is_direct_remediation", False)
+
+        # "How do I fix X" should land on an actionable section of the matched runbook,
+        # not its Overview/diagnosis text.
+        if is_direct_rem and selected_section is not None and not BASH_COMMAND_RE.search(selected_section.content):
+            siblings = self.vector_store.search(
+                query=search_query, top_k=50, allowed_paths=valid_leaf_paths, leaf_only=True,
+            )
+            for sec, sc in siblings:
+                if sec.document_id == selected_section.document_id and BASH_COMMAND_RE.search(sec.content):
+                    selected_section, best_score = sec, max(sc, best_score)
+                    selected_path = sec.hierarchy_path
+                    break
         procedure_found = True
 
         if selected_section is None:
@@ -253,6 +335,28 @@ class StairRetrieverEngine:
             # arbitrary runbook (and its possibly high-risk commands).
             procedure_found = False
 
+        low_confidence = bool(
+            procedure_found
+            and selected_section is not None
+            and not target_vms
+            and not is_comparison
+            and best_score < LOW_CONFIDENCE_SCORE
+            and term_coverage(query, selected_section) < 0.5
+        )
+
+        # Bulk destructive requests are only answered when a runbook clearly covers them.
+        intent = "runbook"
+        destructive_verb = DESTRUCTIVE_RE.search(query)
+        section_covers_action = bool(
+            destructive_verb
+            and selected_section is not None
+            and destructive_verb.group(1).lower() in selected_section.content.lower()
+        )
+        if entities.get("is_destructive") and (low_confidence or not procedure_found or not section_covers_action):
+            procedure_found = False
+            low_confidence = False
+            intent = "destructive_refused"
+
         if not procedure_found or selected_section is None:
             selected_section = DocumentSection(
                 section_id="sec_not_found",
@@ -266,6 +370,7 @@ class StairRetrieverEngine:
             )
             selected_path = selected_section.hierarchy_path
             commands = []
+            command_risks = {}
             risk_level = "LOW"
         else:
             # 3. Extract executable remediation commands from runbook content
@@ -277,10 +382,14 @@ class StairRetrieverEngine:
                     if line_clean and not line_clean.startswith("#"):
                         commands.append(line_clean)
 
-            # 4. Assess risk level from runbook metadata or content
+            # 4. Assess risk level: the runbook's stated "Risk Level" wins over keyword heuristics
+            command_risks = parse_command_risks(selected_section.content)
+            stated = RISK_LEVEL_RE.search(selected_section.content)
             risk_level = selected_section.metadata.get("risk_level", "LOW")
             content_upper = selected_section.content.upper()
-            if "HIGH" in content_upper or "RESTART" in content_upper or "MIGRATION" in content_upper or "DELETE" in content_upper:
+            if stated:
+                risk_level = stated.group(1).upper()
+            elif "HIGH" in content_upper or "RESTART" in content_upper or "MIGRATION" in content_upper or "DELETE" in content_upper:
                 risk_level = "HIGH"
             elif "MEDIUM" in content_upper or "RELOAD" in content_upper:
                 risk_level = "MEDIUM"
@@ -379,8 +488,8 @@ class StairRetrieverEngine:
         # Sort logs chronologically
         evidence_logs = sorted(evidence_logs, key=lambda r: r.timestamp)[:max_evidence_logs]
 
-        # For direct remediation queries, do not attach unrelated service background logs
-        if is_direct_rem or not procedure_found:
+        # For direct remediation queries or weak matches, do not attach unrelated service background logs
+        if is_direct_rem or not procedure_found or low_confidence:
             evidence_logs = []
 
         return StairRetrievalOutput(
@@ -400,4 +509,74 @@ class StairRetrieverEngine:
             source_document=getattr(selected_section, "document_title", ""),
             is_direct_remediation_query=is_direct_rem,
             procedure_found=procedure_found,
+            command_risks=command_risks,
+            low_confidence=low_confidence,
+            intent=intent,
+        )
+
+    def _anomaly_summary(self) -> List[Dict[str, Any]]:
+        """Flagged VMs across all indexed logs, slowest first (cached)."""
+        if getattr(self, "_anomaly_cache", None) is None:
+            lifecycles = self.analyzer.reconstruct_lifecycles(self.log_records)
+            self.analyzer.detect_anomalies(lifecycles, z_threshold=4.0, absolute_cutoff_seconds=28.0)
+            flagged = [vm for vm in lifecycles.values() if vm.predicted_anomaly or vm.is_known_anomaly]
+            flagged.sort(key=lambda vm: vm.spawn_duration or 0, reverse=True)
+            self._anomaly_cache = [
+                {
+                    "instance_id": vm.instance_id,
+                    "spawn_duration": vm.spawn_duration,
+                    "build_duration": vm.build_duration,
+                    "anomaly_score": round(vm.anomaly_score, 1),
+                    "anomaly_reason": vm.anomaly_reason,
+                    "predicted_anomaly": vm.predicted_anomaly,
+                    "is_known_anomaly": vm.is_known_anomaly,
+                    "vcpu": vm.vcpu,
+                    "memory_mb": vm.memory_mb,
+                    "disk_gb": vm.disk_gb,
+                    "source_file": vm.file_source,
+                    "total_vms": len(lifecycles),
+                }
+                for vm in flagged
+            ]
+        return self._anomaly_cache
+
+    def _retrieve_anomaly_listing(
+        self, query: str, entities: Dict[str, Any], max_evidence_logs: int
+    ) -> StairRetrievalOutput:
+        """Answer "which VMs are anomalous?" from the detector, citing each VM's spawn log line."""
+        anomalies = self._anomaly_summary()
+        valid_leaf_paths = {node.path_so_far for node in self.trie.get_all_leaves()}
+        results = self.vector_store.search(
+            query="Telemetry Diagnosis Anomaly Verification spawn latency baseline",
+            top_k=1, allowed_paths=valid_leaf_paths, leaf_only=True,
+        )
+        section, score = results[0] if results else (None, 0.0)
+
+        evidence: List[LogRecord] = []
+        for a in anomalies:
+            for r in self.instance_log_map.get(a["instance_id"].lower(), []):
+                if "seconds to spawn the instance" in r.message:
+                    evidence.append(r)
+                    break
+        evidence = sorted(evidence, key=lambda r: r.timestamp)[:max(max_evidence_logs, len(anomalies))]
+
+        return StairRetrievalOutput(
+            query=query,
+            hierarchy_path=section.hierarchy_path if section else "Incident Detector",
+            leaf_title=section.title if section else "Anomaly Detection",
+            section_id=section.section_id if section else "anomaly_detector",
+            score=score,
+            procedure_content=section.content if section else "",
+            remediation_commands=[],
+            risk_level="LOW",
+            evidence_records=evidence,
+            candidate_paths=[],
+            extracted_entities=entities,
+            vm_lifecycles={},
+            is_cross_vm_comparison=False,
+            source_document=getattr(section, "document_title", "") if section else "",
+            is_direct_remediation_query=False,
+            procedure_found=True,
+            intent="anomaly_listing",
+            anomalies=anomalies,
         )
