@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  LayoutDashboard, MessageSquare, AlertTriangle, BookOpen, ShieldCheck, Activity, LogOut, ChevronDown, Menu, X,
+  LayoutDashboard, MessageSquare, AlertTriangle, BookOpen, ShieldCheck, Activity, LineChart, LogOut, ChevronDown, Menu, X,
 } from 'lucide-react';
 import FindlyLogo from '../components/FindlyLogo';
 import { api } from '../lib/api';
@@ -13,6 +13,7 @@ export const NAV = [
   { path: '/app/incidents', label: 'Incidents', icon: AlertTriangle },
   { path: '/app/runbooks', label: 'Runbooks', icon: BookOpen },
   { path: '/app/approvals', label: 'Approvals', icon: ShieldCheck },
+  { path: '/app/quality', label: 'Answer quality', icon: LineChart },
   { path: '/app/system', label: 'System health', icon: Activity },
 ];
 

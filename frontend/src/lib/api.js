@@ -16,6 +16,7 @@ export const api = {
   health: () => request('/api/health'),
   metrics: () => request('/api/metrics'),
   evals: (limit = 20) => request(`/api/metrics/evals?limit=${limit}`),
+  evalHistory: (refresh = false) => request(`/api/metrics/eval-history${refresh ? '?refresh=true' : ''}`),
   incidents: () => request('/api/incidents'),
   incident: (id) => request(`/api/incidents/${id}`),
   documents: () => request('/api/documents'),
