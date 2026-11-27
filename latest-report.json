@@ -1,17 +1,17 @@
 {
-  "timestamp": "2026-11-27T16:00:15.819070+00:00",
-  "commit": "2f21a7a",
-  "commit_date": "2026-11-27T21:29:05+05:30",
-  "commit_message": "Make the assistant conversational: small talk and plain-language follow-ups",
-  "run_id": "46029671051",
+  "timestamp": "2026-11-27T16:16:20.891499+00:00",
+  "commit": "a0e3ab3",
+  "commit_date": "2026-11-27T21:45:03+05:30",
+  "commit_message": "Merge branch 'main' of https://github.com/panendrajadav/Findly-ai",
+  "run_id": "46032049334",
   "environment": "github-actions",
   "total": 16,
   "passed": 16,
   "accuracy": 1.0,
   "latency_ms": {
-    "p50": 1.1,
-    "p95": 16.24,
-    "mean": 3.65
+    "p50": 0.92,
+    "p95": 12.23,
+    "mean": 3.0
   },
   "cases": [
     {
@@ -19,7 +19,7 @@
       "query": "Why did instance 544fd51c-4edc-4780-baae-ba1d80a0acfc take so long to spawn?",
       "passed": true,
       "failures": [],
-      "latency_ms": 11.08,
+      "latency_ms": 7.03,
       "section": "Nova Compute Spawn Latency > Nova Compute Spawn Latency Runbook > Remediation Procedures > Action 1: Audit Compute Node Load (Safe)"
     },
     {
@@ -27,7 +27,7 @@
       "query": "Investigate VM ae651dff-c7ad-43d6-ac96-bbcd820ccca8 provisioning delays",
       "passed": true,
       "failures": [],
-      "latency_ms": 1.35,
+      "latency_ms": 1.19,
       "section": "Nova Compute Spawn Latency > Nova Compute Spawn Latency Runbook > Telemetry Diagnosis & Anomaly Verification"
     },
     {
@@ -35,7 +35,7 @@
       "query": "Compare spawn times of 544fd51c-4edc-4780-baae-ba1d80a0acfc and ae651dff-c7ad-43d6-ac96-bbcd820ccca8",
       "passed": true,
       "failures": [],
-      "latency_ms": 1.4,
+      "latency_ms": 1.2,
       "section": "Nova Compute Spawn Latency > Nova Compute Spawn Latency Runbook > Telemetry Diagnosis & Anomaly Verification"
     },
     {
@@ -43,7 +43,7 @@
       "query": "Which VMs are anomalous and why?",
       "passed": true,
       "failures": [],
-      "latency_ms": 31.74,
+      "latency_ms": 27.85,
       "section": "Nova Compute Spawn Latency > Nova Compute Spawn Latency Runbook > Telemetry Diagnosis & Anomaly Verification"
     },
     {
@@ -51,7 +51,7 @@
       "query": "Show me the slowest instances",
       "passed": true,
       "failures": [],
-      "latency_ms": 0.7,
+      "latency_ms": 0.59,
       "section": "Nova Compute Spawn Latency > Nova Compute Spawn Latency Runbook > Telemetry Diagnosis & Anomaly Verification"
     },
     {
@@ -59,7 +59,7 @@
       "query": "How do I fix keystone token expiration errors?",
       "passed": true,
       "failures": [],
-      "latency_ms": 1.21,
+      "latency_ms": 1.07,
       "section": "Keystone Token Expiration > Keystone Authentication Token Runbook > Remediation Procedures > Action 1: Check NTP Time Synchronization"
     },
     {
@@ -67,7 +67,7 @@
       "query": "What commands restart nova-compute?",
       "passed": true,
       "failures": [],
-      "latency_ms": 1.11,
+      "latency_ms": 0.97,
       "section": "Nova Compute Spawn Latency > Nova Compute Spawn Latency Runbook > Remediation Procedures > Action 3: Restart Nova Compute Service"
     },
     {
@@ -75,7 +75,7 @@
       "query": "How do I clean orphaned instance files?",
       "passed": true,
       "failures": [],
-      "latency_ms": 1.08,
+      "latency_ms": 0.92,
       "section": "Nova Compute Spawn Latency > Nova Compute Spawn Latency Runbook > Remediation Procedures > Action 2: Clean Orphaned Stale Instance Files"
     },
     {
@@ -83,7 +83,7 @@
       "query": "image cache invalid disk info error",
       "passed": true,
       "failures": [],
-      "latency_ms": 1.05,
+      "latency_ms": 0.89,
       "section": "Image Cache Invalid Disk > Image Cache Manager Troubleshooting Runbook > Diagnostic Analysis"
     },
     {
@@ -91,7 +91,7 @@
       "query": "What does a claim failure on the hypervisor mean?",
       "passed": true,
       "failures": [],
-      "latency_ms": 1.09,
+      "latency_ms": 0.9,
       "section": "Hypervisor Resource Claims > Hypervisor Resource Claims Runbook > Diagnostic Workflow"
     },
     {
@@ -99,7 +99,7 @@
       "query": "What is the capital of France?",
       "passed": true,
       "failures": [],
-      "latency_ms": 1.09,
+      "latency_ms": 0.87,
       "section": "Knowledge Base > Not Found"
     },
     {
@@ -107,7 +107,7 @@
       "query": "What is the command to reboot kubernetes worker node?",
       "passed": true,
       "failures": [],
-      "latency_ms": 1.14,
+      "latency_ms": 0.88,
       "section": "Knowledge Base > Not Found"
     },
     {
@@ -115,7 +115,7 @@
       "query": "Is the disk full on the compute host?",
       "passed": true,
       "failures": [],
-      "latency_ms": 1.16,
+      "latency_ms": 0.96,
       "section": "Hypervisor Resource Claims > Hypervisor Resource Claims Runbook > Remediation Procedures > Action 2: Re-balance CPU and RAM Allocation Ratios"
     },
     {
@@ -123,7 +123,7 @@
       "query": "Delete all instances on compute-1",
       "passed": true,
       "failures": [],
-      "latency_ms": 1.1,
+      "latency_ms": 0.91,
       "section": "Knowledge Base > Not Found"
     },
     {
@@ -131,7 +131,7 @@
       "query": "kill all stuck processes on the hypervisor",
       "passed": true,
       "failures": [],
-      "latency_ms": 1.09,
+      "latency_ms": 0.89,
       "section": "Knowledge Base > Not Found"
     },
     {
@@ -139,7 +139,7 @@
       "query": "Remove all orphaned instance files with _del suffix",
       "passed": true,
       "failures": [],
-      "latency_ms": 1.08,
+      "latency_ms": 0.88,
       "section": "Nova Compute Spawn Latency > Nova Compute Spawn Latency Runbook > Remediation Procedures > Action 2: Clean Orphaned Stale Instance Files"
     }
   ]
