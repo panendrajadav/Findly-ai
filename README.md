@@ -161,7 +161,7 @@ All 31 automated tests verify:
 - Without a reachable `DATABASE_URL`, the app falls back to SQLite (ephemeral on the free tier).
 
 ### CI (GitHub Actions — `.github/workflows/ci.yml`)
-Runs on every push and PR: `pytest` (full suite, JUnit report uploaded), frontend `npm run build`, and a Docker build + container smoke test against `/api/health`.
+Runs on every push and PR: `pytest` (full suite under three fixed `PYTHONHASHSEED` values, plus a test that requires identical retrieval across hash seeds; JUnit reports uploaded), frontend `npm run build`, and a Docker build + container smoke test against `/api/health`.
 
 ### Monitoring & evaluation logging
 - **Structured access logs**: every `/api` request emits a JSON line (`request_id`, path, status, latency). Responses carry `X-Request-ID` and `X-Response-Time-ms`.

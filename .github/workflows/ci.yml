@@ -72,8 +72,17 @@ jobs:
           git push -q origin eval-history
 
   tests:
-    name: Backend tests (pytest)
+    # The suite runs under several fixed hash seeds: retrieval once depended on
+    # Python's per-process hash randomization (set ordering), so results changed
+    # between restarts. tests/test_determinism.py also compares seeds directly.
+    name: Backend tests (pytest, PYTHONHASHSEED=${{ matrix.hash-seed }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        hash-seed: ["1", "7", "42"]
+    env:
+      PYTHONHASHSEED: ${{ matrix.hash-seed }}
     steps:
       - uses: actions/checkout@v4
 
@@ -95,7 +104,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: test-results-seed-${{ matrix.hash-seed }}
           path: test-results.xml
 
   frontend:
