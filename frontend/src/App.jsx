@@ -54,78 +54,73 @@ export default function App() {
       id: 'intro',
       label: 'Intro',
       icon: Home,
-      badge: null,
     },
     {
       id: 'overview',
       label: 'Overview',
       icon: LayoutDashboard,
-      badge: null,
     },
     {
       id: 'chat',
-      label: 'STAIR Chat',
+      label: 'Chat',
       icon: MessageSquare,
-      badge: 'Active',
     },
     {
       id: 'incidents',
       label: 'Incidents',
       icon: AlertTriangle,
-      badge: '2 New',
     },
     {
       id: 'knowledge',
       label: 'Runbooks',
       icon: BookOpen,
-      badge: '4 Docs',
     },
     {
       id: 'explorer',
-      label: 'STAIR Explorer',
+      label: 'Explorer',
       icon: Layers,
-      badge: null,
     },
     {
       id: 'actions',
       label: 'Actions',
       icon: ShieldCheck,
-      badge: null,
     },
     {
       id: 'settings',
       label: 'Settings',
       icon: Settings,
-      badge: null,
     },
   ];
 
   return (
-    <div className="min-h-screen bg-[#050d08] text-[#FAF5E9] flex flex-col font-sans selection:bg-[#009B4D] selection:text-[#FAF5E9] relative overflow-x-hidden">
-      {/* Background Subtle Gradient Atmosphere in Green, Tangerine Yellow & Ivory */}
-      <div className="ambient-glow-green w-[600px] h-[600px] -top-32 -left-32 fixed"></div>
-      <div className="ambient-glow-yellow w-[500px] h-[500px] top-1/2 -right-32 fixed"></div>
+    <div className="min-h-screen bg-[#0a0e14] text-[#FFFFFF] flex flex-col font-sans selection:bg-[#05AD98] selection:text-[#FFFFFF] relative overflow-x-hidden">
+      {/* Background Subtle Gradient Atmosphere */}
+      <div className="ambient-glow-teal w-[600px] h-[600px] -top-32 -left-32 fixed"></div>
+      <div className="ambient-glow-silver w-[500px] h-[500px] top-1/2 -right-32 fixed"></div>
 
       {/* FLOATING MIDDLE GLASS NAVIGATION BAR */}
-      <header className="sticky top-3 sm:top-5 z-50 w-full px-3 sm:px-6 flex justify-center pointer-events-none">
-        <div className="glass-nav rounded-full px-2.5 sm:px-4 py-2 flex items-center justify-between sm:justify-center space-x-1.5 sm:space-x-3 shadow-2xl border border-[#009B4D]/35 max-w-5xl w-full sm:w-auto pointer-events-auto backdrop-blur-2xl bg-[#09160e]/85">
+      <header className="sticky top-4 sm:top-5 z-50 w-full px-3 sm:px-6 flex justify-center pointer-events-none">
+        <div className="glass-nav rounded-full px-3 py-1.5 flex items-center justify-between sm:justify-center space-x-1 sm:space-x-2 shadow-2xl border border-[#BBBFBF]/15 max-w-fit pointer-events-auto backdrop-blur-2xl bg-[#0a0e14]/90">
           
           {/* Brand Logo & Title on Left */}
           <button
             onClick={() => setActiveTab('intro')}
-            className="flex items-center space-x-2 pl-1 pr-2 sm:pr-3 py-1 rounded-full hover:bg-white/5 transition-all group flex-shrink-0"
+            className="flex items-center space-x-2 pl-1 pr-2 py-1 rounded-full hover:bg-white/5 transition-all group flex-shrink-0"
             title="Return to Introduction Page"
           >
-            <FindlyLogo size={28} className="group-hover:rotate-12 transition-transform" />
-            <span className="font-extrabold text-sm sm:text-base text-[#FAF5E9] tracking-tight hidden md:inline">
+            <FindlyLogo size={24} className="group-hover:rotate-12 transition-transform" />
+            <span className="font-bold text-sm text-[#FFFFFF] tracking-tight">
               Findly AI
             </span>
-            <span className="text-[9px] font-bold uppercase tracking-wider bg-[#0d2015] text-[#FFCC00] border border-[#FFCC00]/40 px-1.5 py-0.5 rounded-full font-mono hidden lg:inline">
+            <span className="text-[9px] font-bold uppercase tracking-wider bg-[#05AD98]/10 text-[#05AD98] border border-[#05AD98]/25 px-1.5 py-0.5 rounded-full font-mono hidden sm:inline">
               STAIR
             </span>
           </button>
 
-          {/* Desktop Middle Navigation Pills */}
+          {/* Subtle Vertical Divider */}
+          <div className="h-4 w-[1px] bg-[#BBBFBF]/20 hidden md:block"></div>
+
+          {/* Desktop Middle Navigation Pills (Single-line, no wrapping, sleek) */}
           <nav className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => {
               const IconComp = item.icon;
@@ -135,61 +130,54 @@ export default function App() {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 flex items-center space-x-1.5 relative group ${
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 flex items-center space-x-1.5 whitespace-nowrap ${
                     isActive
-                      ? 'bg-[#009B4D] text-[#FAF5E9] shadow-md shadow-[#009B4D]/30 font-bold'
-                      : 'text-[#FAF5E9]/70 hover:text-[#FAF5E9] hover:bg-[#009B4D]/15'
+                      ? 'bg-[#05AD98] text-[#FFFFFF] shadow-md shadow-[#05AD98]/25 font-semibold'
+                      : 'text-[#BBBFBF] hover:text-[#FFFFFF] hover:bg-white/5'
                   }`}
                 >
-                  <IconComp className={`w-3.5 h-3.5 ${isActive ? 'text-[#FAF5E9]' : 'text-[#FAF5E9]/70 group-hover:text-[#FFCC00]'}`} />
+                  <IconComp className={`w-3.5 h-3.5 ${isActive ? 'text-[#FFFFFF]' : 'text-[#878787] group-hover:text-[#FFFFFF]'}`} />
                   <span>{item.label}</span>
-
-                  {/* Active Tangerine Yellow Dot */}
-                  {isActive && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#FFCC00]"></span>
-                  )}
-
-                  {/* Notification badge */}
-                  {!isActive && item.badge && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#FFCC00]"></span>
-                  )}
                 </button>
               );
             })}
           </nav>
 
-          {/* Mobile Tab Pill Switcher (Dropdown / Compact) */}
+          {/* Subtle Vertical Divider */}
+          <div className="h-4 w-[1px] bg-[#BBBFBF]/20 hidden md:block"></div>
+
+          {/* Mobile Tab Switcher */}
           <div className="flex md:hidden items-center space-x-2">
-            <span className="text-xs font-bold text-[#FFCC00] font-mono">
+            <span className="text-xs font-semibold text-[#05AD98] font-mono px-2 py-0.5 bg-[#05AD98]/10 rounded-full">
               {navItems.find(n => n.id === activeTab)?.label}
             </span>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-1.5 rounded-full bg-[#0d2015] border border-[#009B4D]/40 text-[#FAF5E9]"
+              className="p-1.5 rounded-full bg-white/5 border border-[#BBBFBF]/15 text-[#FFFFFF]"
             >
               {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
           </div>
 
           {/* Engine Status Indicator on Right */}
-          <div className="flex items-center space-x-2 pl-1 sm:pl-2 border-l border-[#009B4D]/25 flex-shrink-0">
+          <div className="flex items-center space-x-1.5 pl-1 flex-shrink-0">
             <button
               onClick={checkConnection}
               title="Click to re-verify backend connectivity"
               className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono border transition-all ${
                 health?.status === 'HEALTHY'
-                  ? 'bg-[#0d2015] border-[#009B4D]/40 text-[#FAF5E9] hover:border-[#009B4D]'
+                  ? 'bg-white/5 border-[#BBBFBF]/15 text-[#BBBFBF] hover:text-[#FFFFFF] hover:border-[#05AD98]/40'
                   : 'bg-rose-950/80 border-rose-700 text-rose-200'
               }`}
             >
-              <span className={`w-2 h-2 rounded-full ${health?.status === 'HEALTHY' ? 'bg-[#009B4D] animate-ping' : 'bg-rose-500'}`}></span>
+              <span className={`w-2 h-2 rounded-full ${health?.status === 'HEALTHY' ? 'bg-[#05AD98] animate-pulse' : 'bg-rose-500'}`}></span>
               <span className="hidden sm:inline">
-                {health?.status === 'HEALTHY' ? 'STAIR Online' : 'Offline'}
+                {health?.status === 'HEALTHY' ? 'Online' : 'Offline'}
               </span>
-              <span className="text-[#FFCC00] text-[10px] font-bold">
+              <span className="text-[#05AD98] text-[10px] font-bold">
                 {health?.indexed_sections || 19}L
               </span>
-              <RefreshCw className={`w-3 h-3 text-[#FAF5E9]/50 ${checkingHealth ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-3 h-3 text-[#878787] ${checkingHealth ? 'animate-spin' : ''}`} />
             </button>
           </div>
         </div>
@@ -197,16 +185,16 @@ export default function App() {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-black/70 backdrop-blur-md flex flex-col items-center justify-center p-6 md:hidden">
-          <div className="w-full max-w-sm rounded-3xl bg-[#09160e] border border-[#009B4D]/40 p-6 space-y-3 shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-[#009B4D]/30">
+        <div className="fixed inset-0 z-40 bg-black/75 backdrop-blur-md flex flex-col items-center justify-center p-6 md:hidden">
+          <div className="w-full max-w-sm rounded-3xl bg-[#0f141c] border border-[#BBBFBF]/20 p-6 space-y-3 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-[#BBBFBF]/15">
               <div className="flex items-center space-x-2">
                 <FindlyLogo size={24} />
-                <span className="font-bold text-[#FAF5E9]">Navigation Menu</span>
+                <span className="font-bold text-[#FFFFFF]">Navigation Menu</span>
               </div>
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-1 rounded-full hover:bg-white/10 text-[#FAF5E9]"
+                className="p-1 rounded-full hover:bg-white/10 text-[#BBBFBF]"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -225,19 +213,14 @@ export default function App() {
                     }}
                     className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-semibold transition-all ${
                       isActive
-                        ? 'bg-[#009B4D] text-[#FAF5E9] font-bold'
-                        : 'text-[#FAF5E9]/80 hover:bg-[#009B4D]/15'
+                        ? 'bg-[#05AD98] text-[#FFFFFF] font-bold'
+                        : 'text-[#BBBFBF] hover:text-[#FFFFFF] hover:bg-white/5'
                     }`}
                   >
                     <div className="flex items-center space-x-3">
-                      <IconComp className="w-4 h-4 text-[#FFCC00]" />
+                      <IconComp className="w-4 h-4 text-[#05AD98]" />
                       <span>{item.label}</span>
                     </div>
-                    {item.badge && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#0d2015] text-[#FFCC00] border border-[#FFCC00]/30 font-mono">
-                        {item.badge}
-                      </span>
-                    )}
                   </button>
                 );
               })}
@@ -315,18 +298,18 @@ export default function App() {
         )}
       </main>
 
-      {/* Modern Clean Footer in Green, Tangerine & Ivory */}
-      <footer className="py-6 px-8 text-center text-xs text-[#FAF5E9]/60 border-t border-[#009B4D]/20 bg-[#050d08]/90">
+      {/* Modern Clean Footer */}
+      <footer className="py-6 px-8 text-center text-xs text-[#878787] border-t border-[#BBBFBF]/10 bg-[#0a0e14]/90">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center space-x-2">
             <FindlyLogo size={18} />
-            <span>
+            <span className="text-[#BBBFBF]">
               Findly AI • STAIR: Structure Aware Information Retriever • OpenStack Telemetry Ground-Truth
             </span>
           </div>
-          <span className="flex items-center text-[#009B4D] font-mono font-medium">
-            <span className="w-2 h-2 rounded-full bg-[#009B4D] mr-2"></span>
-            <span className="text-[#FAF5E9]">33,434 OpenStack log records verified</span>
+          <span className="flex items-center text-[#05AD98] font-mono font-medium">
+            <span className="w-2 h-2 rounded-full bg-[#05AD98] mr-2"></span>
+            <span className="text-[#BBBFBF]">33,434 OpenStack log records verified</span>
           </span>
         </div>
       </footer>

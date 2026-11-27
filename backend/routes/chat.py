@@ -1,6 +1,7 @@
 """Grounded Chat API routes utilizing Qwen assistant and STAIR retrieval."""
 
 import json
+import time
 import uuid
 from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, HTTPException
@@ -8,6 +9,7 @@ from pydantic import BaseModel
 
 from findly.assistant.qwen_engine import QwenGroundedAssistant
 from findly.database import ChatMessageRecord, SessionLocal
+from findly.monitoring import build_chat_eval, eval_log
 from backend.state import state
 
 router = APIRouter(prefix="/api/chat", tags=["Chat"])
@@ -30,11 +32,18 @@ def chat_with_assistant(req: ChatRequest):
     if not state.retriever:
         raise HTTPException(status_code=500, detail="STAIR engine not initialized.")
 
+    start = time.perf_counter()
+
     # 1. STAIR Retrieval
     retrieval = state.retriever.retrieve(req.query)
 
     # 2. Qwen Synthesis
     response = assistant.synthesize(retrieval)
+
+    # Evaluation logging (retrieval quality + grounding signals)
+    eval_log.log(build_chat_eval(
+        retrieval, response, state.trie, (time.perf_counter() - start) * 1000, req.session_id
+    ))
 
     # 3. Save message to DB
     db = SessionLocal()

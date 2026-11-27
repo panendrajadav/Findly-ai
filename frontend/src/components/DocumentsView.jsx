@@ -130,8 +130,8 @@ export default function KnowledgeBaseView() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center h-80 text-[#FAF5E9]/60 space-y-3">
-        <div className="w-8 h-8 rounded-full border-2 border-[#009B4D] border-t-transparent animate-spin"></div>
+      <div className="flex flex-col items-center justify-center h-80 text-[#878787] space-y-3">
+        <div className="w-8 h-8 rounded-full border-2 border-[#05AD98] border-t-transparent animate-spin"></div>
         <span className="text-sm font-medium">Loading Knowledge Base documents and operational runbooks...</span>
       </div>
     );
@@ -141,16 +141,16 @@ export default function KnowledgeBaseView() {
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto px-4 sm:px-6 py-2">
-      {/* Upload Dropzone in Green, Tangerine & Ivory */}
-      <div className="p-8 border-dashed border-2 border-[#009B4D]/35 hover:border-[#009B4D] transition-all text-center rounded-3xl shadow-xl bg-[#09160e]/80">
-        <UploadCloud className="w-12 h-12 text-[#009B4D] mx-auto mb-3" />
-        <h4 className="text-base font-bold text-[#FAF5E9]">Ingest Operational Documents & Runbooks</h4>
-        <p className="text-xs text-[#FAF5E9]/75 mt-2 max-w-xl mx-auto leading-relaxed">
+      {/* Upload Dropzone */}
+      <div className="p-8 border-dashed border-2 border-[#BBBFBF]/25 hover:border-[#05AD98]/60 transition-all text-center rounded-3xl shadow-xl bg-[#0f141c]/90">
+        <UploadCloud className="w-12 h-12 text-[#05AD98] mx-auto mb-3" />
+        <h4 className="text-base font-bold text-[#FFFFFF]">Ingest Operational Documents & Runbooks</h4>
+        <p className="text-xs text-[#BBBFBF] mt-2 max-w-xl mx-auto leading-relaxed">
           Upload PDF, DOCX, Markdown, or TXT runbooks. STAIR parses complete structural headings and sections—strictly preserving procedural context without arbitrary fixed-size chunking.
         </p>
 
         <div className="mt-5 flex items-center justify-center space-x-3">
-          <label className="bg-gradient-to-r from-[#009B4D] to-[#008240] hover:from-[#00b85b] hover:to-[#009B4D] text-[#FAF5E9] px-6 py-2.5 rounded-full text-xs font-bold cursor-pointer transition-all shadow-lg shadow-[#009B4D]/25 inline-flex items-center">
+          <label className="bg-[#05AD98] hover:bg-[#049683] text-[#FFFFFF] px-6 py-2.5 rounded-full text-xs font-bold cursor-pointer transition-all shadow-lg shadow-[#05AD98]/25 inline-flex items-center">
             <span>Select File to Ingest</span>
             <input
               type="file"
@@ -162,13 +162,13 @@ export default function KnowledgeBaseView() {
         </div>
 
         {uploading && (
-          <div className="text-xs text-[#009B4D] mt-4 flex items-center justify-center">
-            <RefreshCw className="w-4 h-4 animate-spin mr-2 text-[#009B4D]" />
+          <div className="text-xs text-[#05AD98] mt-4 flex items-center justify-center">
+            <RefreshCw className="w-4 h-4 animate-spin mr-2 text-[#05AD98]" />
             Parsing document structural hierarchy and updating Prefix Trie...
           </div>
         )}
         {uploadMsg && (
-          <div className="text-xs text-[#FAF5E9] mt-4 font-medium bg-[#0d2015] p-3 rounded-2xl border border-[#009B4D]/50 max-w-lg mx-auto">
+          <div className="text-xs text-[#FFFFFF] mt-4 font-medium bg-[#05AD98]/10 p-3 rounded-2xl border border-[#05AD98]/30 max-w-lg mx-auto">
             {uploadMsg}
           </div>
         )}
@@ -180,30 +180,30 @@ export default function KnowledgeBaseView() {
       </div>
 
       {actionNotice && (
-        <div className="p-4 bg-[#0d2015] border border-[#009B4D] text-[#FAF5E9] text-xs rounded-2xl flex items-center shadow-lg">
-          <CheckCircle className="w-4 h-4 mr-2.5 text-[#009B4D] flex-shrink-0" />
+        <div className="p-4 bg-[#05AD98]/10 border border-[#05AD98]/30 text-[#FFFFFF] text-xs rounded-2xl flex items-center shadow-lg">
+          <CheckCircle className="w-4 h-4 mr-2.5 text-[#05AD98] flex-shrink-0" />
           <span>{actionNotice}</span>
         </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Document List */}
-        <div className="p-6 border border-[#009B4D]/30 shadow-2xl rounded-3xl flex flex-col bg-[#09160e]/85">
-          <div className="flex justify-between items-center mb-4 pb-2 border-b border-[#009B4D]/25">
+        <div className="p-6 border border-[#BBBFBF]/15 shadow-2xl rounded-3xl flex flex-col bg-[#0f141c]/90">
+          <div className="flex justify-between items-center mb-4 pb-2 border-b border-[#BBBFBF]/15">
             <div>
-              <h4 className="text-sm font-bold text-[#FAF5E9] flex items-center">
-                <BookOpen className="w-4 h-4 mr-2 text-[#009B4D]" />
+              <h4 className="text-sm font-bold text-[#FFFFFF] flex items-center">
+                <BookOpen className="w-4 h-4 mr-2 text-[#05AD98]" />
                 Knowledge Base ({documents.length})
               </h4>
-              <div className="text-[11px] text-[#FFCC00] mt-1 font-mono">
+              <div className="text-[11px] text-[#05AD98] mt-1 font-mono">
                 {totalSections} indexed complete sections
               </div>
             </div>
             <button
               onClick={fetchDocuments}
-              className="p-1.5 rounded-xl bg-[#050d08] hover:bg-[#0d2015] border border-[#009B4D]/30 text-[#FAF5E9]/60 hover:text-[#FAF5E9] transition-colors"
+              className="p-1.5 rounded-xl bg-[#0a0e14] hover:bg-[#151c27] border border-[#BBBFBF]/15 text-[#BBBFBF] hover:text-[#FFFFFF] transition-colors"
             >
-              <RefreshCw className="w-3.5 h-3.5 text-[#FFCC00]" />
+              <RefreshCw className="w-3.5 h-3.5 text-[#05AD98]" />
             </button>
           </div>
 
@@ -214,39 +214,39 @@ export default function KnowledgeBaseView() {
                 onClick={() => handleSelectDoc(doc.id)}
                 className={`p-4 rounded-2xl border transition-all cursor-pointer ${
                   selectedDoc === doc.id
-                    ? 'bg-[#009B4D]/20 border-[#009B4D] shadow-md'
-                    : 'bg-[#050d08]/80 border-[#009B4D]/20 hover:border-[#009B4D]/50'
+                    ? 'bg-[#05AD98]/15 border-[#05AD98] shadow-md'
+                    : 'bg-[#0a0e14]/90 border-[#BBBFBF]/10 hover:border-[#05AD98]/40'
                 }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="space-y-1 flex-1">
-                    <div className="text-xs font-bold text-[#FAF5E9] flex items-center">
-                      <FileText className="w-3.5 h-3.5 mr-1.5 text-[#009B4D] flex-shrink-0" />
+                    <div className="text-xs font-bold text-[#FFFFFF] flex items-center">
+                      <FileText className="w-3.5 h-3.5 mr-1.5 text-[#05AD98] flex-shrink-0" />
                       <span className="truncate">{doc.title}</span>
                     </div>
-                    <div className="text-[10.5px] text-[#FAF5E9]/60 font-mono truncate">
+                    <div className="text-[10.5px] text-[#878787] font-mono truncate">
                       {doc.filename}
                     </div>
                   </div>
-                  <span className="text-[10px] font-mono font-bold bg-[#0d2015] text-[#FFCC00] border border-[#FFCC00]/30 px-2 py-0.5 rounded-full ml-2 flex-shrink-0">
+                  <span className="text-[10px] font-mono font-bold bg-[#05AD98]/10 text-[#05AD98] border border-[#05AD98]/25 px-2 py-0.5 rounded-full ml-2 flex-shrink-0">
                     {doc.total_sections || 0} leaves
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between mt-3 pt-2 border-t border-[#009B4D]/15 text-[10.5px]">
-                  <span className="text-[#FAF5E9]/50 font-mono">{doc.file_type?.toUpperCase()}</span>
+                <div className="flex items-center justify-between mt-3 pt-2 border-t border-[#BBBFBF]/10 text-[10.5px]">
+                  <span className="text-[#878787] font-mono">{doc.file_type?.toUpperCase()}</span>
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={(e) => handleReingestDoc(doc.id, doc.title, e)}
                       title="Re-parse structure & reindex into Trie"
-                      className="text-[#FAF5E9]/60 hover:text-[#009B4D] p-1 transition-colors"
+                      className="text-[#878787] hover:text-[#05AD98] p-1 transition-colors"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={(e) => handleDeleteDoc(doc.id, doc.title, e)}
                       title="Delete document"
-                      className="text-[#FAF5E9]/60 hover:text-rose-400 p-1 transition-colors"
+                      className="text-[#878787] hover:text-rose-400 p-1 transition-colors"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -258,20 +258,20 @@ export default function KnowledgeBaseView() {
         </div>
 
         {/* Section Structure Hierarchy Viewer */}
-        <div className="lg:col-span-2 p-6 border border-[#009B4D]/30 shadow-2xl rounded-3xl flex flex-col bg-[#09160e]/85">
-          <div className="flex justify-between items-center mb-4 pb-2 border-b border-[#009B4D]/25">
-            <h4 className="text-sm font-bold text-[#FAF5E9] flex items-center">
-              <Layers className="w-4 h-4 mr-2 text-[#009B4D]" />
+        <div className="lg:col-span-2 p-6 border border-[#BBBFBF]/15 shadow-2xl rounded-3xl flex flex-col bg-[#0f141c]/90">
+          <div className="flex justify-between items-center mb-4 pb-2 border-b border-[#BBBFBF]/15">
+            <h4 className="text-sm font-bold text-[#FFFFFF] flex items-center">
+              <Layers className="w-4 h-4 mr-2 text-[#05AD98]" />
               Extracted Table of Contents & Structural Sections
             </h4>
-            <span className="text-[11px] font-mono text-[#FFCC00]">
+            <span className="text-[11px] font-mono text-[#05AD98]">
               {sections.length} Registered Leaves
             </span>
           </div>
 
           {secLoading ? (
-            <div className="flex flex-col items-center justify-center flex-1 py-12 text-[#FAF5E9]/60 space-y-2">
-              <div className="w-6 h-6 rounded-full border-2 border-[#009B4D] border-t-transparent animate-spin"></div>
+            <div className="flex flex-col items-center justify-center flex-1 py-12 text-[#878787] space-y-2">
+              <div className="w-6 h-6 rounded-full border-2 border-[#05AD98] border-t-transparent animate-spin"></div>
               <span className="text-xs">Loading hierarchical sections...</span>
             </div>
           ) : sections.length > 0 ? (
@@ -279,30 +279,30 @@ export default function KnowledgeBaseView() {
               {sections.map((sec, sIdx) => (
                 <div
                   key={sIdx}
-                  className="p-4 rounded-2xl bg-[#050d08]/80 border border-[#009B4D]/20 hover:border-[#009B4D]/40 transition-all space-y-2 text-xs"
+                  className="p-4 rounded-2xl bg-[#0a0e14]/90 border border-[#BBBFBF]/10 hover:border-[#05AD98]/35 transition-all space-y-2 text-xs"
                 >
                   <div className="flex justify-between items-center">
-                    <span className="font-bold text-[#FAF5E9] flex items-center">
-                      <span className="w-2 h-2 rounded-full bg-[#009B4D] mr-2"></span>
+                    <span className="font-bold text-[#FFFFFF] flex items-center">
+                      <span className="w-2 h-2 rounded-full bg-[#05AD98] mr-2"></span>
                       {sec.title}
                     </span>
-                    <span className="text-[10px] font-mono text-[#FFCC00] bg-[#0d2015] border border-[#FFCC00]/30 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-mono text-[#05AD98] bg-[#05AD98]/10 border border-[#05AD98]/25 px-2 py-0.5 rounded-full">
                       Leaf Node
                     </span>
                   </div>
 
-                  <div className="text-[10.5px] font-mono text-[#009B4D] bg-[#09160e] p-2 rounded-xl border border-[#009B4D]/15">
+                  <div className="text-[10.5px] font-mono text-[#05AD98] bg-[#0f141c] p-2 rounded-xl border border-[#BBBFBF]/10">
                     {sec.hierarchy_path}
                   </div>
 
-                  <div className="text-[11px] text-[#FAF5E9]/80 leading-relaxed font-sans line-clamp-3">
+                  <div className="text-[11px] text-[#BBBFBF] leading-relaxed font-sans line-clamp-3">
                     {sec.content}
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 text-[#FAF5E9]/60 text-xs">
+            <div className="text-center py-12 text-[#878787] text-xs">
               Select a document from the left list to inspect its extracted structural sections.
             </div>
           )}
