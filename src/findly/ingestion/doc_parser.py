@@ -87,7 +87,8 @@ class MarkdownStructuralParser:
                 sec_id = f"{doc_id}_sec_{len(sections) + 1}"
 
                 # Extract basic operational keywords
-                keywords = list(set(re.findall(r"\b[A-Za-z0-9_\-]{4,}\b", (current_title + " " + content).lower())))[:12]
+                # dict.fromkeys keeps first-seen order so the index is identical across restarts
+                keywords = list(dict.fromkeys(re.findall(r"\b[A-Za-z0-9_\-]{4,}\b", (current_title + " " + content).lower())))[:12]
 
                 sections.append(DocumentSection(
                     section_id=sec_id,

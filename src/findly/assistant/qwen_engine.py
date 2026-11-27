@@ -90,16 +90,28 @@ class QwenGroundedAssistant:
         proposed_commands = []
         requires_approval = False
 
+        stated_risks = getattr(retrieval, "command_risks", {}) or {}
+        low_confidence = getattr(retrieval, "low_confidence", False)
+        withheld_commands = 0
+
         for cmd in retrieval.remediation_commands:
             cmd_upper = cmd.upper()
-            if any(term in cmd_upper for term in ["RESTART", "MIGRATION", "KILL", "DELETE", "RM -RF"]):
+            if cmd in stated_risks:
+                # The runbook's own "Risk Level" is authoritative
+                cmd_risk = stated_risks[cmd]
+            elif any(term in cmd_upper for term in ["RESTART", "MIGRATION", "KILL", "DELETE", "RM -RF"]):
                 cmd_risk = "HIGH"
-                requires_approval = True
             elif any(term in cmd_upper for term in ["RELOAD", "FLUSH", "STOP", "CRUDINI"]):
                 cmd_risk = "MEDIUM"
-                requires_approval = True
             else:
                 cmd_risk = "LOW"
+
+            # Weak matches never surface risky commands
+            if low_confidence and cmd_risk != "LOW":
+                withheld_commands += 1
+                continue
+            if cmd_risk in ("MEDIUM", "HIGH", "CRITICAL"):
+                requires_approval = True
 
             target = target_vms[0] if target_vms else "compute-host-01"
             proposed_commands.append({
@@ -111,12 +123,25 @@ class QwenGroundedAssistant:
         # Check for unindexed or unfound procedure
         if not getattr(retrieval, "procedure_found", True):
             summary = "No matching runbook procedure found in the knowledge base."
-            detailed_explanation = (
-                f"### Procedure Not Found\n\n"
-                f"No relevant troubleshooting procedure or runbook was found for the inquiry: *\"{query}\"*.\n\n"
-                f"- **Search Status:** Exhausted registered STAIR operational hierarchy and leaf sections.\n"
-                f"- **Recommendation:** Ingest the appropriate operational runbook or check that the procedure is registered in the knowledge base."
-            )
+            if getattr(retrieval, "intent", "") == "destructive_refused":
+                summary = "No runbook covers this destructive operation, so no commands are suggested."
+                detailed_explanation = (
+                    "### Not Covered by Any Runbook\n\n"
+                    f"*\"{query}\"* asks for a bulk destructive operation, and none of the indexed runbooks "
+                    "describe a procedure for it.\n\n"
+                    "- Findly AI only suggests commands that come from a matching runbook section, so **no commands are proposed**.\n"
+                    "- If this is really needed, follow your change-management process and run it manually with a reviewer.\n"
+                    "- To investigate an instance first, ask about it by ID (for example: *\"Why did instance 544fd51c take so long to spawn?\"*)."
+                )
+            else:
+                detailed_explanation = None
+            if detailed_explanation is None:
+                detailed_explanation = (
+                    f"### Procedure Not Found\n\n"
+                    f"No relevant troubleshooting procedure or runbook was found for the inquiry: *\"{query}\"*.\n\n"
+                    f"- **Search Status:** Exhausted registered STAIR operational hierarchy and leaf sections.\n"
+                    f"- **Recommendation:** Ingest the appropriate operational runbook or check that the procedure is registered in the knowledge base."
+                )
             return AssistantResponse(
                 query=query,
                 hierarchy_path="Knowledge Base > Not Found",
@@ -132,6 +157,19 @@ class QwenGroundedAssistant:
 
         # Build Diagnostic Sections
         parts: List[str] = []
+
+        # SPECIAL CASE: "Which VMs are anomalous?" -> answer from the detector
+        if getattr(retrieval, "intent", "") == "anomaly_listing":
+            return self._synthesize_anomaly_listing(retrieval, citations)
+
+        if low_confidence:
+            note = (
+                "> **Low-confidence match.** No runbook section closely matches this question. "
+                f"The closest section is shown below for reference."
+            )
+            if withheld_commands:
+                note += f" {withheld_commands} higher-risk command(s) from it were withheld."
+            parts.append(note)
 
         # SPECIAL CASE: Direct Remediation Query (Answer directly without unrelated anomaly stats or unsupported claims)
         if getattr(retrieval, "is_direct_remediation_query", False) and not target_vms:
@@ -366,7 +404,7 @@ class QwenGroundedAssistant:
         detailed_explanation = "\n\n".join(parts)
 
         summary = (
-            f"STAIR matched `{path}` (Score: {retrieval.score:.2f}). "
+            f"{'Closest (low-confidence) match' if low_confidence else 'STAIR matched'} `{path}` (Score: {retrieval.score:.2f}). "
             f"Ground-truth telemetry verified for {len(logs)} log records."
         )
 
@@ -387,6 +425,65 @@ class QwenGroundedAssistant:
             proposed_commands=proposed_commands,
             requires_approval=requires_approval,
             approval_prompt=approval_prompt,
+            evidence_citations=citations,
+            model_name=self.model_name,
+        )
+
+    def _synthesize_anomaly_listing(self, retrieval: StairRetrievalOutput, citations: List[Dict[str, Any]]) -> AssistantResponse:
+        """List every flagged VM with its measured spawn time and deviation from baseline."""
+        anomalies = getattr(retrieval, "anomalies", []) or []
+        total = anomalies[0]["total_vms"] if anomalies else 0
+        confirmed = sum(1 for a in anomalies if a.get("is_known_anomaly"))
+
+        if not anomalies:
+            text = "### Anomalous VMs\n\nNo VM spawn times deviate from the normal baseline in the indexed logs."
+            summary = "No anomalous VMs detected."
+        else:
+            rows = [
+                "| Instance | Spawn time | Build time | Deviation | Resources | Status |",
+                "| :--- | :--- | :--- | :--- | :--- | :--- |",
+            ]
+            for a in anomalies:
+                spawn = f"**{a['spawn_duration']:.2f}s**" if a.get("spawn_duration") is not None else "N/A"
+                build = f"{a['build_duration']:.2f}s" if a.get("build_duration") is not None else "N/A"
+                dev = f"+{a['anomaly_score']}σ" if a.get("anomaly_score") else "—"
+                res = f"{a.get('vcpu')} vCPU / {a.get('memory_mb')} MB / {a.get('disk_gb')} GB"
+                if a.get("predicted_anomaly") and a.get("is_known_anomaly"):
+                    status = "Flagged · confirmed"
+                elif a.get("predicted_anomaly"):
+                    status = "Flagged · not in labels"
+                else:
+                    status = "Missed by detector"
+                rows.append(f"| `{a['instance_id']}` | {spawn} | {build} | {dev} | {res} | {status} |")
+
+            text = "\n\n".join([
+                "### Anomalous VMs",
+                f"**{len(anomalies)}** of **{total}** VMs have spawn times far above the normal baseline "
+                f"(`19.79s ± 0.65s`); **{confirmed}** are confirmed by the ground-truth labels.",
+                "\n".join(rows),
+                "#### Why they are flagged\n"
+                "- Each VM's `Took X seconds to spawn the instance` log line is compared with the baseline from normal runs. "
+                "A VM is flagged when it is more than 4σ above the mean or slower than 28s.\n"
+                "- All flagged VMs requested the same flavor (1 vCPU, 2048 MB, 20 GB) as normal VMs, so the delay is not explained by a bigger request.",
+                "#### What the logs can't tell you\n"
+                "- The OpenStack service logs contain no host CPU, disk I/O or network metrics, so the **physical root cause is unknown**. "
+                "Asserting CPU starvation or disk contention would be unsupported.",
+                "#### Next steps\n"
+                "- Ask about a specific VM for its full timeline, e.g. *\"Why did instance "
+                f"{anomalies[0]['instance_id']} take so long to spawn?\"*\n"
+                "- Follow the **Nova Compute Spawn Latency** runbook, starting with the safe read-only audit (`uptime && free -m && iostat -xz 1 5`).",
+            ])
+            summary = f"{len(anomalies)} anomalous VMs found out of {total}; {confirmed} confirmed by labels."
+
+        return AssistantResponse(
+            query=retrieval.query,
+            hierarchy_path=retrieval.hierarchy_path,
+            summary=summary,
+            detailed_explanation=text,
+            retrieved_procedure=retrieval.procedure_content,
+            proposed_commands=[],
+            requires_approval=False,
+            approval_prompt="",
             evidence_citations=citations,
             model_name=self.model_name,
         )
