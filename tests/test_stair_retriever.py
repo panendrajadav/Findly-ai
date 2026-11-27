@@ -63,3 +63,11 @@ def test_stair_retriever_engine_trie_constrained_routing():
     assert result.leaf_title == "Instance Spawning Delays"
     assert "systemctl restart openstack-nova-compute" in result.remediation_commands
     assert result.risk_level in ["MEDIUM", "HIGH"]
+
+
+def test_off_topic_query_returns_not_found_without_commands():
+    from backend.state import state
+    state.initialize()
+    out = state.retriever.retrieve("What is the capital of France?")
+    assert out.procedure_found is False
+    assert out.remediation_commands == []

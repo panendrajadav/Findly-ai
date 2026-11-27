@@ -28,6 +28,9 @@ REQ_PATTERN = re.compile(
 )
 BASH_COMMAND_RE = re.compile(r"```bash\s*\n(.*?)\n```", re.DOTALL)
 
+# Minimum similarity for a non-VM question to be answered from a runbook section.
+MIN_RELEVANCE_SCORE = 0.05
+
 
 @dataclass
 class StairRetrievalOutput:
@@ -245,6 +248,10 @@ class StairRetrieverEngine:
                     procedure_found = False
             elif best_score < 0.15:
                 procedure_found = False
+        elif not target_vms and best_score < MIN_RELEVANCE_SCORE:
+            # Off-topic / unmatched question with no VM context: don't return an
+            # arbitrary runbook (and its possibly high-risk commands).
+            procedure_found = False
 
         if not procedure_found or selected_section is None:
             selected_section = DocumentSection(
