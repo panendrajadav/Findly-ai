@@ -169,5 +169,22 @@
     },
     "failed_cases": [],
     "environment": "local-backfill"
+  },
+  {
+    "timestamp": "2026-11-27T11:33:31.156478+00:00",
+    "commit": "567526c",
+    "commit_date": "2026-11-27T17:02:16+05:30",
+    "commit_message": "Add answer-quality dashboard: golden-set eval in CI, history over commits",
+    "run_id": "45991303008",
+    "environment": "github-actions",
+    "total": 16,
+    "passed": 16,
+    "accuracy": 1.0,
+    "latency_ms": {
+      "p50": 2.17,
+      "p95": 23.3,
+      "mean": 5.74
+    },
+    "failed_cases": []
   }
 ]
