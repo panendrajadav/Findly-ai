@@ -79,7 +79,15 @@ function Evidence({ citations }) {
   );
 }
 
-function AssistantMessage({ data, onPropose }) {
+function AssistantMessage({ data, onPropose, onExplain, busy }) {
+  // Small talk and plain-language follow-ups: a light, conversational bubble.
+  if (data.intent === 'conversation' || data.intent === 'clarification') {
+    return (
+      <div className="max-w-[90%] rounded-2xl rounded-bl-sm border border-slate-200 bg-white px-4 py-3 shadow-card">
+        <div className="md"><ReactMarkdown remarkPlugins={[remarkGfm]}>{data.detailed_explanation || ''}</ReactMarkdown></div>
+      </div>
+    );
+  }
   return (
     <div className="card space-y-4 p-5">
       <Breadcrumb path={data.hierarchy_path} />
@@ -99,12 +107,22 @@ function AssistantMessage({ data, onPropose }) {
         </div>
       )}
       <Evidence citations={data.evidence_citations} />
+      {onExplain && (
+        <div className="flex items-center justify-between gap-3 border-t border-slate-100 pt-3">
+          <span className="text-xs text-slate-500">Too technical?</span>
+          <button className="btn-secondary btn-sm" disabled={busy} onClick={onExplain}>
+            <Sparkles className="h-3.5 w-3.5" /> Explain this simply
+          </button>
+        </div>
+      )}
     </div>
   );
 }
 
 export default function Assistant({ session, route }) {
   const [messages, setMessages] = useState([]);
+  // Each conversation gets its own server-side session so follow-ups refer to the right answer.
+  const [conversationId, setConversationId] = useState(session.sessionId);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState('');
@@ -120,7 +138,7 @@ export default function Assistant({ session, route }) {
     setMessages((m) => [...m, { role: 'user', text: q }]);
     setBusy(true);
     try {
-      const data = await api.chat(q, session.sessionId);
+      const data = await api.chat(q, conversationId);
       setMessages((m) => [...m, { role: 'assistant', data }]);
     } catch (e) {
       setMessages((m) => [...m, { role: 'error', text: e.message }]);
@@ -155,7 +173,7 @@ export default function Assistant({ session, route }) {
           <h1 className="page-title">Assistant</h1>
           <p className="page-subtitle">Answers come from your runbooks and are backed by log evidence.</p>
         </div>
-        {messages.length > 0 && <button className="btn-ghost btn-sm" onClick={() => setMessages([])}>New conversation</button>}
+        {messages.length > 0 && <button className="btn-ghost btn-sm" onClick={() => { setMessages([]); setConversationId(`${session.sessionId}_${Date.now().toString(36)}`); }}>New conversation</button>}
       </div>
 
       <div className="flex-1 space-y-4 pb-4">
@@ -163,7 +181,7 @@ export default function Assistant({ session, route }) {
           <div className="card px-6 py-12 text-center">
             <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-brand-50 text-brand-600"><Sparkles className="h-5 w-5" /></div>
             <h2 className="mt-4 font-semibold text-slate-900">What would you like to investigate?</h2>
-            <p className="mt-1 text-sm text-slate-500">Ask about a VM, an error, or how to fix something.</p>
+            <p className="mt-1 text-sm text-slate-500">Ask about a VM, an error, or how to fix something. If an answer is unclear, just say “I don&apos;t understand”.</p>
             <div className="mx-auto mt-6 grid max-w-2xl gap-2 sm:grid-cols-2">
               {SUGGESTED.map((q) => (
                 <button key={q} onClick={() => send(q)} className="rounded-lg border border-slate-200 px-4 py-3 text-left text-sm text-slate-700 hover:border-brand-200 hover:bg-brand-50/50">
@@ -185,7 +203,17 @@ export default function Assistant({ session, route }) {
           if (m.role === 'error') {
             return <div key={i} className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">Something went wrong: {m.text}</div>;
           }
-          return <AssistantMessage key={i} data={m.data} onPropose={propose} />;
+          // Only the latest detailed answer can be re-explained (the server remembers the last one).
+          const isLastAnswer = i === messages.length - 1;
+          return (
+            <AssistantMessage
+              key={i}
+              data={m.data}
+              onPropose={propose}
+              busy={busy}
+              onExplain={isLastAnswer ? () => send('Can you explain that in simple terms?') : undefined}
+            />
+          );
         })}
 
         {busy && (
