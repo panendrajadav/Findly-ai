@@ -10,6 +10,7 @@ import Incidents from './app/Incidents';
 import Runbooks from './app/Runbooks';
 import Approvals from './app/Approvals';
 import System from './app/System';
+import Quality from './app/Quality';
 
 const PAGES = {
   '/app': Overview,
@@ -18,6 +19,7 @@ const PAGES = {
   '/app/runbooks': Runbooks,
   '/app/approvals': Approvals,
   '/app/system': System,
+  '/app/quality': Quality,
 };
 
 export default function App() {

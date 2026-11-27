@@ -68,3 +68,27 @@ def test_chat_produces_eval_record(client):
     assert latest["query"].startswith("How do I fix nova")
     for key in ("hierarchy_path", "trie_valid_leaf", "retrieval_score", "latency_ms", "citation_count"):
         assert key in latest
+
+
+def test_eval_history_falls_back_to_local_file(client, tmp_path, monkeypatch):
+    from backend.routes import metrics as m
+    runs = [{"commit": "abc1234", "accuracy": 0.875, "latency_ms": {"p50": 1.0, "p95": 2.0, "mean": 1.2}}]
+    (tmp_path / "eval-history.json").write_text(json.dumps(runs), encoding="utf-8")
+    monkeypatch.setattr(m, "EVAL_HISTORY_BASE", "http://127.0.0.1:9/unreachable")
+    monkeypatch.setattr(m, "EVAL_HISTORY_DIR", tmp_path)
+    data = client.get("/api/metrics/eval-history?refresh=true").json()
+    assert data["source"] == "local"
+    assert data["runs"][0]["accuracy"] == 0.875
+    assert data["errors"]  # the GitHub fetch failure is reported, not hidden
+
+
+def test_golden_eval_meets_threshold():
+    """The golden question set must keep passing (same gate CI applies)."""
+    import importlib.util, pathlib
+    root = pathlib.Path(__file__).resolve().parent.parent
+    spec = importlib.util.spec_from_file_location("run_eval", root / "scripts" / "run_eval.py")
+    run_eval = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(run_eval)
+    report = run_eval.run(root, root / "evals" / "golden.json")
+    failed = [c["id"] for c in report["cases"] if not c["passed"]]
+    assert report["accuracy"] >= 0.9, failed

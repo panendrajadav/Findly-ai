@@ -167,3 +167,9 @@ Runs on every push and PR: `pytest` (full suite, JUnit report uploaded), fronten
 - **Structured access logs**: every `/api` request emits a JSON line (`request_id`, path, status, latency). Responses carry `X-Request-ID` and `X-Response-Time-ms`.
 - **`GET /api/metrics`**: uptime, request totals, 5xx error rate, p50/p95/p99 latency (overall and per route), plus an evaluation summary.
 - **`GET /api/metrics/evals?limit=50`**: per-query chat evaluation records — retrieved hierarchy path, Trie-valid-leaf flag, retrieval score, procedure found, citation count, approval required, latency. Also appended to `logs/evals.jsonl` (`FINDLY_EVAL_LOG` to override).
+
+### Answer-quality dashboard
+- `evals/golden.json` is a fixed set of 16 test questions with expected outcomes (right runbook section, cited numbers, no risky commands on weak matches, refusals for off-topic/destructive asks).
+- `python scripts/run_eval.py --output report.json --history eval-history.json` scores them and records accuracy plus p50/p95 answer time.
+- CI runs it on every push (fails below 90% accuracy) and on `main` appends the result to the `eval-history` branch.
+- The app's **Answer quality** page (`/#/app/quality`, API `GET /api/metrics/eval-history`) charts accuracy and response time per commit, shows the latest run's per-question results, and live response times for this deployment.
