@@ -1,0 +1,173 @@
+[
+  {
+    "timestamp": "2026-11-27T11:22:02.179717+00:00",
+    "commit": "24d44bb",
+    "commit_date": "2026-11-01T15:00:54+05:30",
+    "commit_message": "context adjustments",
+    "run_id": "local",
+    "total": 16,
+    "passed": 7,
+    "accuracy": 0.4375,
+    "latency_ms": {
+      "p50": 1.37,
+      "p95": 4.89,
+      "mean": 2.22
+    },
+    "failed_cases": [
+      "vm-spawn-why",
+      "list-anomalies",
+      "list-slowest",
+      "keystone-fix",
+      "orphan-cleanup-risk",
+      "offtopic",
+      "weak-match-disk",
+      "destructive-bulk",
+      "destructive-kill"
+    ],
+    "environment": "local-backfill"
+  },
+  {
+    "timestamp": "2026-11-27T11:22:19.252561+00:00",
+    "commit": "85df94b",
+    "commit_date": "2026-11-01T16:20:36+05:30",
+    "commit_message": "improved accuracy of response",
+    "run_id": "local",
+    "total": 16,
+    "passed": 7,
+    "accuracy": 0.4375,
+    "latency_ms": {
+      "p50": 1.67,
+      "p95": 6.12,
+      "mean": 2.56
+    },
+    "failed_cases": [
+      "vm-spawn-why",
+      "list-anomalies",
+      "list-slowest",
+      "keystone-fix",
+      "orphan-cleanup-risk",
+      "offtopic",
+      "weak-match-disk",
+      "destructive-bulk",
+      "destructive-kill"
+    ],
+    "environment": "local-backfill"
+  },
+  {
+    "timestamp": "2026-11-27T11:22:36.487925+00:00",
+    "commit": "7c61a74",
+    "commit_date": "2026-11-01T16:35:41+05:30",
+    "commit_message": "frontend update",
+    "run_id": "local",
+    "total": 16,
+    "passed": 7,
+    "accuracy": 0.4375,
+    "latency_ms": {
+      "p50": 1.29,
+      "p95": 3.71,
+      "mean": 1.86
+    },
+    "failed_cases": [
+      "vm-spawn-why",
+      "list-anomalies",
+      "list-slowest",
+      "keystone-fix",
+      "orphan-cleanup-risk",
+      "offtopic",
+      "weak-match-disk",
+      "destructive-bulk",
+      "destructive-kill"
+    ],
+    "environment": "local-backfill"
+  },
+  {
+    "timestamp": "2026-11-27T11:22:53.715776+00:00",
+    "commit": "fc246d4",
+    "commit_date": "2026-11-01T21:29:05+05:30",
+    "commit_message": "color theme updated",
+    "run_id": "local",
+    "total": 16,
+    "passed": 7,
+    "accuracy": 0.4375,
+    "latency_ms": {
+      "p50": 1.33,
+      "p95": 3.77,
+      "mean": 1.9
+    },
+    "failed_cases": [
+      "vm-spawn-why",
+      "list-anomalies",
+      "list-slowest",
+      "keystone-fix",
+      "orphan-cleanup-risk",
+      "offtopic",
+      "weak-match-disk",
+      "destructive-bulk",
+      "destructive-kill"
+    ],
+    "environment": "local-backfill"
+  },
+  {
+    "timestamp": "2026-11-27T11:23:11.991902+00:00",
+    "commit": "33ae6d8",
+    "commit_date": "2026-11-27T13:31:41+05:30",
+    "commit_message": "Redesign frontend with landing, sign-in and app shell; guard off-topic answers",
+    "run_id": "local",
+    "total": 16,
+    "passed": 8,
+    "accuracy": 0.5,
+    "latency_ms": {
+      "p50": 1.3,
+      "p95": 3.82,
+      "mean": 1.9
+    },
+    "failed_cases": [
+      "vm-spawn-why",
+      "list-anomalies",
+      "list-slowest",
+      "keystone-fix",
+      "orphan-cleanup-risk",
+      "weak-match-disk",
+      "destructive-bulk",
+      "destructive-kill"
+    ],
+    "environment": "local-backfill"
+  },
+  {
+    "timestamp": "2026-11-27T11:23:28.973165+00:00",
+    "commit": "b5b0679",
+    "commit_date": "2026-11-27T13:43:54+05:30",
+    "commit_message": "Improve answer quality: anomaly listing, actionable fixes, confidence and safety",
+    "run_id": "local",
+    "total": 16,
+    "passed": 14,
+    "accuracy": 0.875,
+    "latency_ms": {
+      "p50": 2.05,
+      "p95": 23.85,
+      "mean": 5.89
+    },
+    "failed_cases": [
+      "vm-spawn-why",
+      "keystone-fix"
+    ],
+    "environment": "local-backfill"
+  },
+  {
+    "timestamp": "2026-11-27T11:23:46.029609+00:00",
+    "commit": "587fd45",
+    "commit_date": "2026-11-27T16:42:39+05:30",
+    "commit_message": "Answer fix questions with all steps in order; lead VM diagnosis with safe checks",
+    "run_id": "local",
+    "total": 16,
+    "passed": 16,
+    "accuracy": 1.0,
+    "latency_ms": {
+      "p50": 1.29,
+      "p95": 21.36,
+      "mean": 5.26
+    },
+    "failed_cases": [],
+    "environment": "local-backfill"
+  }
+]
