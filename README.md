@@ -1,5 +1,7 @@
 # Findly AI — Structure-Aware RAG (STAIR) & OpenStack Incident Analysis
 
+[![CI](https://github.com/panendrajadav/Findly-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/panendrajadav/Findly-ai/actions/workflows/ci.yml) **Live demo:** https://findly-ai-lxbp.onrender.com
+
 Findly AI is an enterprise-grade, structure-aware Retrieval-Augmented Generation (RAG) system for cloud infrastructure diagnostics and DevOps runbook automation. It implements the research-paper-inspired **STAIR (Structure Aware Information Retriever, arXiv:2609.03874)** architecture, replacing conventional arbitrary fixed-size chunking with hierarchical Table of Contents (ToC) representations and **Trie-constrained decoding**.
 
 ---
@@ -152,6 +154,8 @@ All 31 automated tests verify:
 ## Deployment, CI & Monitoring
 
 ### Live deployment (Render, Docker)
+**Live:** https://findly-ai-lxbp.onrender.com · health: [`/api/health`](https://findly-ai-lxbp.onrender.com/api/health) · metrics: [`/api/metrics`](https://findly-ai-lxbp.onrender.com/api/metrics)
+
 - `Dockerfile` builds the React SPA (Node 20) and serves it plus the API from one FastAPI/uvicorn container (`$PORT` aware).
 - `render.yaml` is a Render Blueprint: free web service, health check on `/api/health`, auto-deploy on push to `main`.
 - Without a reachable `DATABASE_URL`, the app falls back to SQLite (ephemeral on the free tier).
