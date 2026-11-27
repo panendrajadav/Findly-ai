@@ -39,6 +39,7 @@ DESTRUCTIVE_RE = re.compile(
     r"\b(all|every|everything|instances|vms|servers|hosts|database|tenants?|projects?)\b",
     re.IGNORECASE,
 )
+REMEDIATION_ASK_RE = re.compile(r"remediat|\bfix|resolve|command|procedure|how do i|how to|what should i do", re.IGNORECASE)
 LISTING_CUE_RE = re.compile(r"\b(which|what|list|show|any|how many|all|top|slowest|find)\b", re.IGNORECASE)
 ANOMALY_CUE_RE = re.compile(r"anomal|outlier|abnormal|incident|slow|problem|unhealthy|flagged", re.IGNORECASE)
 TARGET_CUE_RE = re.compile(r"\b(vms?|instances?|servers?|machines?|anomalies|incidents|outliers)\b", re.IGNORECASE)
@@ -296,15 +297,29 @@ class StairRetrieverEngine:
 
         # "How do I fix X" should land on an actionable section of the matched runbook,
         # not its Overview/diagnosis text.
+        # A generic "how do I fix X" matched the runbook's overview: return every remediation
+        # step of that runbook in document order (safe checks come first).
         if is_direct_rem and selected_section is not None and not BASH_COMMAND_RE.search(selected_section.content):
-            siblings = self.vector_store.search(
-                query=search_query, top_k=50, allowed_paths=valid_leaf_paths, leaf_only=True,
-            )
-            for sec, sc in siblings:
-                if sec.document_id == selected_section.document_id and BASH_COMMAND_RE.search(sec.content):
-                    selected_section, best_score = sec, max(sc, best_score)
-                    selected_path = sec.hierarchy_path
-                    break
+            actions = self._command_sections(selected_section.document_id, valid_leaf_paths)
+            if actions:
+                selected_section = self._combine_actions(actions)
+                selected_path = selected_section.hierarchy_path
+
+        # "Why is this VM slow?" should lead with a safe, read-only diagnostic from the
+        # same runbook rather than a section whose commands change the host.
+        if (
+            target_vms and not is_comparison and not is_direct_rem
+            and not REMEDIATION_ASK_RE.search(query)
+            and selected_section is not None
+            and self._has_risky_commands(selected_section)
+        ):
+            safe = [
+                sec for sec in self._command_sections(selected_section.document_id, valid_leaf_paths)
+                if not self._has_risky_commands(sec)
+            ]
+            if safe:
+                selected_section = safe[0]
+                selected_path = selected_section.hierarchy_path
         procedure_found = True
 
         if selected_section is None:
@@ -512,6 +527,45 @@ class StairRetrieverEngine:
             command_risks=command_risks,
             low_confidence=low_confidence,
             intent=intent,
+        )
+
+    def _command_sections(self, document_id: str, valid_leaf_paths: Set[str]) -> List[DocumentSection]:
+        """Leaf sections of a document that contain bash commands, in document (path) order."""
+        secs = [
+            sec for sec in self.vector_store.sections.values()
+            if sec.document_id == document_id
+            and sec.is_leaf
+            and sec.hierarchy_path in valid_leaf_paths
+            and BASH_COMMAND_RE.search(sec.content)
+        ]
+        return sorted(secs, key=lambda sec: sec.hierarchy_path)
+
+    @staticmethod
+    def _has_risky_commands(section: DocumentSection) -> bool:
+        risks = parse_command_risks(section.content)
+        if risks:
+            return any(r != "LOW" for r in risks.values())
+        upper = section.content.upper()
+        return any(t in upper for t in ("RESTART", "MIGRAT", "RM -RF", "DELETE", "FLUSH", "RELOAD"))
+
+    @staticmethod
+    def _combine_actions(actions: List[DocumentSection]) -> DocumentSection:
+        """Merge a runbook's remediation actions into one ordered procedure."""
+        if len(actions) == 1:
+            return actions[0]
+        first = actions[0]
+        body = "\n\n".join(f"**{sec.title}**\n{sec.content}" for sec in actions)
+        return DocumentSection(
+            section_id=first.section_id,
+            document_id=first.document_id,
+            document_title=first.document_title,
+            title=f"Remediation steps ({len(actions)} actions, in order)",
+            hierarchy_path=first.hierarchy_path,
+            level=first.level,
+            is_leaf=True,
+            content=body,
+            keywords=first.keywords,
+            metadata=first.metadata,
         )
 
     def _anomaly_summary(self) -> List[Dict[str, Any]]:
