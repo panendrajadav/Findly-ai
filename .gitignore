@@ -8,3 +8,4 @@ data/
 frontend/node_modules/
 frontend/.vite/
 .env
+logs/

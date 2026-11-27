@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: findly-ai
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: FINDLY_LOG_LEVEL
+        value: INFO

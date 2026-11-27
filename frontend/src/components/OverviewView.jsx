@@ -43,7 +43,7 @@ export default function OverviewView({ onNavigate, onSelectQuery }) {
       value: documents.length || 4,
       unit: "Runbooks & SOPs",
       icon: FileText,
-      color: "from-[#009B4D] to-[#008240]",
+      color: "from-[#05AD98] to-[#048e7d]",
       desc: "Full structural Markdown runbooks"
     },
     {
@@ -51,7 +51,7 @@ export default function OverviewView({ onNavigate, onSelectQuery }) {
       value: health?.indexed_sections || 19,
       unit: "ToC Leaf Nodes",
       icon: Layers,
-      color: "from-[#008240] to-[#0d2015]",
+      color: "from-[#048e7d] to-[#151c27]",
       desc: "Prefix Trie registered leaves"
     },
     {
@@ -59,7 +59,7 @@ export default function OverviewView({ onNavigate, onSelectQuery }) {
       value: health?.indexed_sections || 19,
       unit: "Complete Sections",
       icon: Database,
-      color: "from-[#009B4D] to-[#006833]",
+      color: "from-[#05AD98] to-[#037466]",
       desc: "Zero fixed-size chunking"
     },
     {
@@ -67,30 +67,30 @@ export default function OverviewView({ onNavigate, onSelectQuery }) {
       value: incidentsData?.total_anomalies_detected || 2,
       unit: "Confirmed Outliers",
       icon: AlertTriangle,
-      color: "from-[#FFCC00]/80 to-[#e6b800]",
+      color: "from-amber-600 to-rose-600",
       desc: "Recall 100% against labels"
     }
   ];
 
   return (
     <div className="space-y-8 pb-10 max-w-6xl mx-auto px-4 sm:px-6">
-      {/* Top Banner / Hero in Green, Tangerine Yellow & Ivory */}
-      <div className="p-8 sm:p-10 border border-[#009B4D]/30 rounded-[32px] bg-[#09160e]/85 shadow-2xl relative overflow-hidden backdrop-blur-2xl">
-        <div className="ambient-glow-green w-96 h-96 -top-20 -right-20"></div>
-        <div className="ambient-glow-yellow w-80 h-80 -bottom-20 -left-20"></div>
+      {/* Top Banner / Hero in Teal, Silver & White */}
+      <div className="p-8 sm:p-10 border border-[#BBBFBF]/15 rounded-[32px] bg-[#0f141c]/85 shadow-2xl relative overflow-hidden backdrop-blur-2xl">
+        <div className="ambient-glow-teal w-96 h-96 -top-20 -right-20"></div>
+        <div className="ambient-glow-silver w-80 h-80 -bottom-20 -left-20"></div>
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3">
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#0d2015] border border-[#009B4D]/40 text-[#FAF5E9] text-xs font-mono">
-              <span className="w-2 h-2 rounded-full bg-[#009B4D] animate-ping"></span>
-              <span className="w-2 h-2 rounded-full bg-[#009B4D]"></span>
-              <span className="text-[#FFCC00] font-bold">STAIR ENGINE v2.4 OPERATIONAL</span>
-              <span>• 33,434 OpenStack Oslo Events</span>
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#151c27] border border-[#BBBFBF]/20 text-[#FFFFFF] text-xs font-mono">
+              <span className="w-2 h-2 rounded-full bg-[#05AD98] animate-ping"></span>
+              <span className="w-2 h-2 rounded-full bg-[#05AD98]"></span>
+              <span className="text-[#05AD98] font-bold">STAIR ENGINE v2.4 OPERATIONAL</span>
+              <span className="text-[#BBBFBF]">• 33,434 OpenStack Oslo Events</span>
             </div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#FAF5E9] tracking-tight">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#FFFFFF] tracking-tight">
               Operational Intelligence & Diagnostic Overview
             </h1>
-            <p className="text-sm text-[#FAF5E9]/80 max-w-2xl leading-relaxed">
+            <p className="text-sm text-[#BBBFBF] max-w-2xl leading-relaxed">
               Findly AI bridges OpenStack Oslo syslogs with structure-aware runbook retrieval. Review hypervisor health, detected provisioning delays, and live retrieval activity below.
             </p>
           </div>
@@ -98,17 +98,17 @@ export default function OverviewView({ onNavigate, onSelectQuery }) {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <button
               onClick={() => onNavigate('explorer')}
-              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-[#009B4D] to-[#008240] hover:from-[#00b85b] hover:to-[#009B4D] text-[#FAF5E9] font-bold text-xs flex items-center justify-center space-x-2 shadow-xl shadow-[#009B4D]/25 transition-all"
+              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-[#05AD98] to-[#048e7d] hover:from-[#08c9af] hover:to-[#05AD98] text-[#FFFFFF] font-bold text-xs flex items-center justify-center space-x-2 shadow-xl shadow-[#05AD98]/25 transition-all"
             >
-              <Play className="w-4 h-4 fill-current text-[#FFCC00]" />
+              <Play className="w-4 h-4 fill-current text-[#FFFFFF]" />
               <span>STAIR Flow Demo</span>
             </button>
             <button
               onClick={() => onNavigate('chat')}
-              className="px-5 py-3 rounded-2xl bg-[#050d08] hover:bg-[#0d2015] border border-[#009B4D]/40 text-[#FAF5E9] font-semibold text-xs flex items-center justify-center space-x-2 transition-all"
+              className="px-5 py-3 rounded-2xl bg-[#0a0e14] hover:bg-[#151c27] border border-[#BBBFBF]/20 text-[#FFFFFF] font-semibold text-xs flex items-center justify-center space-x-2 transition-all"
             >
               <span>Launch STAIR Chat</span>
-              <ArrowRight className="w-4 h-4 text-[#FFCC00]" />
+              <ArrowRight className="w-4 h-4 text-[#05AD98]" />
             </button>
           </div>
         </div>
@@ -121,27 +121,27 @@ export default function OverviewView({ onNavigate, onSelectQuery }) {
           return (
             <div
               key={idx}
-              className="p-6 border border-[#009B4D]/25 rounded-3xl bg-[#09160e]/70 shadow-xl relative overflow-hidden group hover:border-[#009B4D]/50 transition-all backdrop-blur-xl"
+              className="p-6 border border-[#BBBFBF]/15 rounded-3xl bg-[#0f141c]/70 shadow-xl relative overflow-hidden group hover:border-[#05AD98]/50 transition-all backdrop-blur-xl"
             >
               <div className="flex items-center justify-between pb-3">
-                <span className="text-xs font-semibold text-[#FAF5E9]/70 tracking-wide uppercase">
+                <span className="text-xs font-semibold text-[#878787] tracking-wide uppercase">
                   {stat.title}
                 </span>
-                <div className={`w-9 h-9 rounded-2xl bg-gradient-to-tr ${stat.color} flex items-center justify-center text-[#FAF5E9] shadow-md border border-[#009B4D]/30`}>
-                  <IconComp className="w-4 h-4 text-[#FFCC00]" />
+                <div className={`w-9 h-9 rounded-2xl bg-gradient-to-tr ${stat.color} flex items-center justify-center text-[#FFFFFF] shadow-md border border-[#BBBFBF]/20`}>
+                  <IconComp className="w-4 h-4 text-[#FFFFFF]" />
                 </div>
               </div>
 
               <div className="flex items-baseline space-x-2 mt-2">
-                <span className="text-3xl font-extrabold text-[#FAF5E9] font-mono tracking-tight">
+                <span className="text-3xl font-extrabold text-[#FFFFFF] font-mono tracking-tight">
                   {stat.value}
                 </span>
-                <span className="text-xs font-medium text-[#FAF5E9]/60">
+                <span className="text-xs font-medium text-[#878787]">
                   {stat.unit}
                 </span>
               </div>
 
-              <p className="text-[11px] text-[#FAF5E9]/70 mt-2 font-mono">
+              <p className="text-[11px] text-[#BBBFBF] mt-2 font-mono">
                 {stat.desc}
               </p>
             </div>
@@ -149,35 +149,35 @@ export default function OverviewView({ onNavigate, onSelectQuery }) {
         })}
       </div>
 
-      {/* Dark Deep-Learning Showcase Card in Green, Tangerine & Ivory */}
-      <div className="p-8 border border-[#009B4D]/30 rounded-[32px] bg-gradient-to-r from-[#050d08] via-[#09160e] to-[#050d08] shadow-2xl relative overflow-hidden">
-        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-[#009B4D]/15 to-transparent pointer-events-none"></div>
+      {/* Showcase Card */}
+      <div className="p-8 border border-[#BBBFBF]/15 rounded-[32px] bg-gradient-to-r from-[#0a0e14] via-[#0f141c] to-[#0a0e14] shadow-2xl relative overflow-hidden">
+        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-[#05AD98]/10 to-transparent pointer-events-none"></div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-7 space-y-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#FFCC00] font-mono">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#05AD98] font-mono">
               STAIR Architectural Core
             </span>
-            <h2 className="text-2xl md:text-3xl font-bold text-[#FAF5E9] tracking-tight">
+            <h2 className="text-2xl md:text-3xl font-bold text-[#FFFFFF] tracking-tight">
               Structure-Aware Retrieval built for technical runbooks.
             </h2>
-            <p className="text-xs md:text-sm text-[#FAF5E9]/80 leading-relaxed max-w-xl">
+            <p className="text-xs md:text-sm text-[#BBBFBF] leading-relaxed max-w-xl">
               Unlike ordinary chunk-based RAG that tears apart markdown runbooks at arbitrary 512 token limits, Findly AI indexes full structural units and enforces registered leaf selection with a Prefix Trie.
             </p>
           </div>
 
           <div className="lg:col-span-5 grid grid-cols-3 gap-4 text-center">
-            <div className="p-4 rounded-2xl bg-[#09160e] border border-[#009B4D]/25">
-              <div className="text-2xl lg:text-3xl font-extrabold text-[#FAF5E9] font-mono">93.8%</div>
-              <div className="text-[10px] text-[#FFCC00] mt-1 uppercase font-semibold">Trie Accuracy</div>
+            <div className="p-4 rounded-2xl bg-[#0f141c] border border-[#BBBFBF]/15">
+              <div className="text-2xl lg:text-3xl font-extrabold text-[#FFFFFF] font-mono">93.8%</div>
+              <div className="text-[10px] text-[#05AD98] mt-1 uppercase font-semibold">Trie Accuracy</div>
             </div>
-            <div className="p-4 rounded-2xl bg-[#09160e] border border-[#009B4D]/25">
-              <div className="text-2xl lg:text-3xl font-extrabold text-[#009B4D] font-mono">33.4k</div>
-              <div className="text-[10px] text-[#FAF5E9]/70 mt-1 uppercase font-semibold">Oslo Logs</div>
+            <div className="p-4 rounded-2xl bg-[#0f141c] border border-[#BBBFBF]/15">
+              <div className="text-2xl lg:text-3xl font-extrabold text-[#05AD98] font-mono">33.4k</div>
+              <div className="text-[10px] text-[#BBBFBF] mt-1 uppercase font-semibold">Oslo Logs</div>
             </div>
-            <div className="p-4 rounded-2xl bg-[#09160e] border border-[#009B4D]/25">
-              <div className="text-2xl lg:text-3xl font-extrabold text-[#FFCC00] font-mono">0</div>
-              <div className="text-[10px] text-[#FAF5E9]/70 mt-1 uppercase font-semibold">Hallucinations</div>
+            <div className="p-4 rounded-2xl bg-[#0f141c] border border-[#BBBFBF]/15">
+              <div className="text-2xl lg:text-3xl font-extrabold text-[#FFFFFF] font-mono">0</div>
+              <div className="text-[10px] text-[#878787] mt-1 uppercase font-semibold">Hallucinations</div>
             </div>
           </div>
         </div>
@@ -186,15 +186,15 @@ export default function OverviewView({ onNavigate, onSelectQuery }) {
       {/* Main Grid: Recent Incidents & STAIR Processing Pipeline Status */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Recent Detected Incidents (7 cols) */}
-        <div className="lg:col-span-7 p-6 border border-[#009B4D]/30 rounded-3xl bg-[#09160e]/80 shadow-xl space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#009B4D]/25">
+        <div className="lg:col-span-7 p-6 border border-[#BBBFBF]/15 rounded-3xl bg-[#0f141c]/80 shadow-xl space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#BBBFBF]/15">
             <div className="flex items-center space-x-2.5">
-              <AlertTriangle className="w-5 h-5 text-[#FFCC00]" />
+              <AlertTriangle className="w-5 h-5 text-amber-400" />
               <div>
-                <h3 className="text-sm font-bold text-[#FAF5E9] tracking-wide uppercase">
+                <h3 className="text-sm font-bold text-[#FFFFFF] tracking-wide uppercase">
                   OpenStack VM Provisioning Anomalies
                 </h3>
-                <div className="text-[11px] text-[#FAF5E9]/60">
+                <div className="text-[11px] text-[#878787]">
                   Compared against baseline spawn mean 19.79s ± 0.65s
                 </div>
               </div>
@@ -202,10 +202,10 @@ export default function OverviewView({ onNavigate, onSelectQuery }) {
 
             <button
               onClick={() => onNavigate('incidents')}
-              className="text-xs text-[#009B4D] hover:text-[#00b85b] font-semibold flex items-center space-x-1 transition-colors"
+              className="text-xs text-[#05AD98] hover:text-[#08c9af] font-semibold flex items-center space-x-1 transition-colors"
             >
               <span>View All Incidents</span>
-              <ArrowRight className="w-3.5 h-3.5 text-[#FFCC00]" />
+              <ArrowRight className="w-3.5 h-3.5 text-[#05AD98]" />
             </button>
           </div>
 
@@ -213,23 +213,23 @@ export default function OverviewView({ onNavigate, onSelectQuery }) {
             {incidentsData?.incidents?.slice(0, 3).map((inc, i) => (
               <div
                 key={i}
-                className="p-4 rounded-2xl bg-[#050d08]/80 border border-[#009B4D]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-[#009B4D]/50 transition-all"
+                className="p-4 rounded-2xl bg-[#0a0e14]/80 border border-[#BBBFBF]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-[#05AD98]/50 transition-all"
               >
                 <div className="space-y-1">
                   <div className="flex items-center space-x-2">
-                    <span className="font-mono text-xs font-bold text-[#FAF5E9]">
+                    <span className="font-mono text-xs font-bold text-[#FFFFFF]">
                       {inc.instance_id.slice(0, 8)}...
                     </span>
                     <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                       inc.is_known_anomaly
                         ? 'bg-rose-950/80 text-rose-300 border border-rose-800'
-                        : 'bg-[#0d2015] text-[#009B4D] border border-[#009B4D]/40'
+                        : 'bg-[#05AD98]/20 text-[#05AD98] border border-[#05AD98]/30'
                     }`}>
                       {inc.is_known_anomaly ? 'CONFIRMED ANOMALY' : 'NORMAL'}
                     </span>
                   </div>
-                  <div className="text-[11px] text-[#FAF5E9]/70">
-                    Spawn: <strong className="text-[#FAF5E9] font-mono">{inc.spawn_duration ? `${inc.spawn_duration}s` : 'N/A'}</strong> (Dev: <span className="text-rose-400">+{inc.spawn_diff}s</span>, Z: <span className="text-rose-400">+{inc.spawn_z}σ</span>)
+                  <div className="text-[11px] text-[#BBBFBF]">
+                    Spawn: <strong className="text-[#FFFFFF] font-mono">{inc.spawn_duration ? `${inc.spawn_duration}s` : 'N/A'}</strong> (Dev: <span className="text-rose-400">+{inc.spawn_diff}s</span>, Z: <span className="text-rose-400">+{inc.spawn_z}σ</span>)
                   </div>
                 </div>
 
@@ -240,14 +240,14 @@ export default function OverviewView({ onNavigate, onSelectQuery }) {
                       onSelectQuery(`Why did VM ${inc.instance_id} take over 40 seconds to spawn?`);
                     }
                   }}
-                  className="px-3.5 py-1.5 rounded-xl bg-[#009B4D]/30 hover:bg-[#009B4D]/60 border border-[#009B4D]/40 text-[#FAF5E9] text-xs font-semibold flex items-center space-x-1.5 self-start sm:self-center transition-all"
+                  className="px-3.5 py-1.5 rounded-xl bg-[#05AD98]/20 hover:bg-[#05AD98]/40 border border-[#05AD98]/40 text-[#FFFFFF] text-xs font-semibold flex items-center space-x-1.5 self-start sm:self-center transition-all"
                 >
                   <span>Investigate</span>
-                  <ArrowRight className="w-3 h-3 text-[#FFCC00]" />
+                  <ArrowRight className="w-3 h-3 text-[#05AD98]" />
                 </button>
               </div>
             )) || (
-              <div className="text-xs text-[#FAF5E9]/60 py-6 text-center">
+              <div className="text-xs text-[#878787] py-6 text-center">
                 Loading OpenStack anomaly telemetry...
               </div>
             )}
@@ -257,55 +257,55 @@ export default function OverviewView({ onNavigate, onSelectQuery }) {
         {/* Right: STAIR Processing Status & Knowledge Breakdown (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
           {/* Engine Status Card */}
-          <div className="p-6 border border-[#009B4D]/30 rounded-3xl bg-[#09160e]/80 shadow-xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#009B4D]/25">
+          <div className="p-6 border border-[#BBBFBF]/15 rounded-3xl bg-[#0f141c]/80 shadow-xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#BBBFBF]/15">
               <div className="flex items-center space-x-2">
-                <Activity className="w-4 h-4 text-[#009B4D]" />
-                <h3 className="text-xs font-bold text-[#FAF5E9] tracking-wide uppercase">
+                <Activity className="w-4 h-4 text-[#05AD98]" />
+                <h3 className="text-xs font-bold text-[#FFFFFF] tracking-wide uppercase">
                   STAIR Engine Diagnostics
                 </h3>
               </div>
-              <span className="flex items-center space-x-1.5 text-xs text-[#009B4D] font-mono">
-                <span className="w-2 h-2 rounded-full bg-[#009B4D] animate-pulse"></span>
+              <span className="flex items-center space-x-1.5 text-xs text-[#05AD98] font-mono">
+                <span className="w-2 h-2 rounded-full bg-[#05AD98] animate-pulse"></span>
                 <span>Active</span>
               </span>
             </div>
 
             <div className="space-y-2.5 text-xs">
-              <div className="flex justify-between items-center p-3 rounded-xl bg-[#050d08] border border-[#009B4D]/20">
-                <span className="text-[#FAF5E9]/60">Prefix Trie Leaves:</span>
-                <span className="text-[#FAF5E9] font-mono font-bold">{health?.trie_leaves || 19} registered</span>
+              <div className="flex justify-between items-center p-3 rounded-xl bg-[#0a0e14] border border-[#BBBFBF]/15">
+                <span className="text-[#878787]">Prefix Trie Leaves:</span>
+                <span className="text-[#FFFFFF] font-mono font-bold">{health?.trie_leaves || 19} registered</span>
               </div>
-              <div className="flex justify-between items-center p-3 rounded-xl bg-[#050d08] border border-[#009B4D]/20">
-                <span className="text-[#FAF5E9]/60">OpenStack Oslo Records:</span>
-                <span className="text-[#009B4D] font-mono font-bold">{health?.openstack_logs_loaded?.toLocaleString() || '33,434'} lines</span>
+              <div className="flex justify-between items-center p-3 rounded-xl bg-[#0a0e14] border border-[#BBBFBF]/15">
+                <span className="text-[#878787]">OpenStack Oslo Records:</span>
+                <span className="text-[#05AD98] font-mono font-bold">{health?.openstack_logs_loaded?.toLocaleString() || '33,434'} lines</span>
               </div>
-              <div className="flex justify-between items-center p-3 rounded-xl bg-[#050d08] border border-[#009B4D]/20">
-                <span className="text-[#FAF5E9]/60">Ground-Truth Baseline:</span>
-                <span className="text-[#FFCC00] font-mono font-bold">19.79s ± 0.65s</span>
+              <div className="flex justify-between items-center p-3 rounded-xl bg-[#0a0e14] border border-[#BBBFBF]/15">
+                <span className="text-[#878787]">Ground-Truth Baseline:</span>
+                <span className="text-[#FFFFFF] font-mono font-bold">19.79s ± 0.65s</span>
               </div>
-              <div className="flex justify-between items-center p-3 rounded-xl bg-[#050d08] border border-[#009B4D]/20">
-                <span className="text-[#FAF5E9]/60">Synthesis Engine:</span>
-                <span className="text-[#FAF5E9] font-mono font-bold">Qwen Grounded Assistant</span>
+              <div className="flex justify-between items-center p-3 rounded-xl bg-[#0a0e14] border border-[#BBBFBF]/15">
+                <span className="text-[#878787]">Synthesis Engine:</span>
+                <span className="text-[#BBBFBF] font-mono font-bold">Qwen Grounded Assistant</span>
               </div>
             </div>
 
             <div className="pt-2">
               <button
                 onClick={() => onNavigate('explorer')}
-                className="w-full py-2.5 rounded-xl bg-[#050d08] hover:bg-[#0d2015] border border-[#009B4D]/30 text-xs text-[#FAF5E9]/80 hover:text-[#FAF5E9] font-semibold flex items-center justify-center space-x-2 transition-colors"
+                className="w-full py-2.5 rounded-xl bg-[#0a0e14] hover:bg-[#151c27] border border-[#BBBFBF]/20 text-xs text-[#BBBFBF] hover:text-[#FFFFFF] font-semibold flex items-center justify-center space-x-2 transition-colors"
               >
-                <Compass className="w-4 h-4 text-[#009B4D]" />
+                <Compass className="w-4 h-4 text-[#05AD98]" />
                 <span>Explore STAIR Prefix Trie Tree</span>
               </button>
             </div>
           </div>
 
           {/* Quick Diagnostic Starters */}
-          <div className="p-5 border border-[#009B4D]/30 rounded-3xl bg-[#09160e]/60 shadow-xl space-y-3">
-            <div className="text-xs font-bold text-[#FAF5E9]/80 uppercase tracking-wider flex items-center justify-between">
+          <div className="p-5 border border-[#BBBFBF]/15 rounded-3xl bg-[#0f141c]/60 shadow-xl space-y-3">
+            <div className="text-xs font-bold text-[#878787] uppercase tracking-wider flex items-center justify-between">
               <span>Quick Diagnostic Starters</span>
-              <Sparkles className="w-3.5 h-3.5 text-[#FFCC00]" />
+              <Sparkles className="w-3.5 h-3.5 text-[#05AD98]" />
             </div>
 
             <div className="space-y-2 text-xs">
@@ -321,10 +321,10 @@ export default function OverviewView({ onNavigate, onSelectQuery }) {
                     onNavigate('chat');
                     if (onSelectQuery) onSelectQuery(item.query);
                   }}
-                  className="w-full text-left p-2.5 rounded-xl bg-[#050d08]/80 hover:bg-[#009B4D]/20 border border-[#009B4D]/20 hover:border-[#009B4D]/50 text-[#FAF5E9]/80 hover:text-[#FAF5E9] transition-all flex items-center justify-between group"
+                  className="w-full text-left p-2.5 rounded-xl bg-[#0a0e14]/80 hover:bg-[#05AD98]/10 border border-[#BBBFBF]/15 hover:border-[#05AD98]/40 text-[#BBBFBF] hover:text-[#FFFFFF] transition-all flex items-center justify-between group"
                 >
                   <span className="font-medium truncate">{item.title}</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#FFCC00] group-hover:translate-x-1 transition-all flex-shrink-0" />
+                  <ArrowRight className="w-3.5 h-3.5 text-[#05AD98] group-hover:translate-x-1 transition-all flex-shrink-0" />
                 </button>
               ))}
             </div>

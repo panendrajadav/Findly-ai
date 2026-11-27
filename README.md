@@ -146,3 +146,20 @@ All 31 automated tests verify:
 - Qwen assistant grounded synthesis with exact numerical precision
 - DevOps action proposal, risk assessment, and approval/rejection workflow
 - Complete FastAPI REST API endpoints
+
+---
+
+## Deployment, CI & Monitoring
+
+### Live deployment (Render, Docker)
+- `Dockerfile` builds the React SPA (Node 20) and serves it plus the API from one FastAPI/uvicorn container (`$PORT` aware).
+- `render.yaml` is a Render Blueprint: free web service, health check on `/api/health`, auto-deploy on push to `main`.
+- Without a reachable `DATABASE_URL`, the app falls back to SQLite (ephemeral on the free tier).
+
+### CI (GitHub Actions — `.github/workflows/ci.yml`)
+Runs on every push and PR: `pytest` (full suite, JUnit report uploaded), frontend `npm run build`, and a Docker build + container smoke test against `/api/health`.
+
+### Monitoring & evaluation logging
+- **Structured access logs**: every `/api` request emits a JSON line (`request_id`, path, status, latency). Responses carry `X-Request-ID` and `X-Response-Time-ms`.
+- **`GET /api/metrics`**: uptime, request totals, 5xx error rate, p50/p95/p99 latency (overall and per route), plus an evaluation summary.
+- **`GET /api/metrics/evals?limit=50`**: per-query chat evaluation records — retrieved hierarchy path, Trie-valid-leaf flag, retrieval score, procedure found, citation count, approval required, latency. Also appended to `logs/evals.jsonl` (`FINDLY_EVAL_LOG` to override).

@@ -7,35 +7,49 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Core Palette Requested by User
+        // User Provided Palette: #BBBFBF, #878787, #05AD98, #FFFFFF
         brand: {
-          green: '#009B4D',
-          'green-light': '#00b85b',
-          'green-dark': '#007a3c',
-          yellow: '#FFCC00',
-          'yellow-light': '#ffd633',
-          'yellow-dark': '#e6b800',
-          ivory: '#FAF5E9',
-          'ivory-muted': '#f0e8d5',
-          'ivory-subtle': '#e6dcbf',
+          teal: '#05AD98',
+          'teal-light': '#08c9af',
+          'teal-dark': '#048e7d',
+          silver: '#BBBFBF',
+          'silver-light': '#d4d8d8',
+          'silver-dark': '#a3a8a8',
+          slate: '#878787',
+          'slate-light': '#9e9e9e',
+          'slate-dark': '#6b6b6b',
+          white: '#FFFFFF',
+          // Backward-compat aliases
+          green: '#05AD98',
+          'green-light': '#08c9af',
+          'green-dark': '#048e7d',
+          yellow: '#05AD98',
+          ivory: '#FFFFFF',
         },
-        forest: {
-          950: '#050d08',
-          900: '#09160e',
-          850: '#0d2015',
-          800: '#12291c',
-          750: '#163323',
-          700: '#1c3e2c',
-          600: '#255039',
+        dark: {
+          950: '#070a0e',
+          900: '#0a0e14',
+          850: '#0f141c',
+          800: '#151c27',
+          750: '#1b2432',
+          700: '#232d3d',
         },
         // Fallback backward-compatible scales
+        forest: {
+          950: '#070a0e',
+          900: '#0a0e14',
+          850: '#0f141c',
+          800: '#151c27',
+          750: '#1b2432',
+          700: '#232d3d',
+        },
         navy: {
-          950: '#050d08',
-          900: '#09160e',
-          850: '#0d2015',
-          800: '#12291c',
-          750: '#163323',
-          700: '#1c3e2c',
+          950: '#070a0e',
+          900: '#0a0e14',
+          850: '#0f141c',
+          800: '#151c27',
+          750: '#1b2432',
+          700: '#232d3d',
         },
       },
       fontFamily: {

@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from findly.analyzer import LogAnalyzer
 from findly.database import DocumentRecord, SectionRecord, SessionLocal, init_db
-from findly.ingestion.doc_parser import ParsedDocument
+from findly.ingestion.doc_parser import ParsedDocument, UnifiedDocumentIngestion
 from findly.ingestion.runbook_loader import load_all_runbooks
 from findly.models import LogRecord
 from findly.parser import parse_log_file

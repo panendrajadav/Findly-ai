@@ -337,48 +337,48 @@ export default function StairInteractiveVisualizer({ onSelectQuery }) {
   };
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto px-4 sm:px-6">
-      {/* Top Hero Banner in Green, Tangerine Yellow & Ivory */}
-      <div className="p-8 border border-[#009B4D]/30 rounded-3xl bg-[#09160e]/85 shadow-2xl relative overflow-hidden backdrop-blur-2xl">
-        <div className="ambient-glow-green w-96 h-96 -top-20 -right-20"></div>
-        <div className="ambient-glow-yellow w-80 h-80 -bottom-20 -left-20"></div>
+    <div className="space-y-6 max-w-6xl mx-auto px-4 sm:px-6 py-2">
+      {/* Top Hero Banner in Teal, Silver & White */}
+      <div className="p-8 border border-[#BBBFBF]/15 rounded-3xl bg-[#0f141c]/85 shadow-2xl relative overflow-hidden backdrop-blur-2xl">
+        <div className="ambient-glow-teal w-96 h-96 -top-20 -right-20"></div>
+        <div className="ambient-glow-silver w-80 h-80 -bottom-20 -left-20"></div>
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-[#0d2015] border border-[#009B4D]/40 text-[#FAF5E9] text-xs font-mono">
-              <Sparkles className="w-3.5 h-3.5 text-[#FFCC00] animate-pulse" />
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-[#151c27] border border-[#BBBFBF]/20 text-[#BBBFBF] text-xs font-mono">
+              <Sparkles className="w-3.5 h-3.5 text-[#05AD98] animate-pulse" />
               <span>Interactive Architecture Demonstration • arXiv:2609.03874</span>
             </div>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-[#FAF5E9] tracking-tight">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-[#FFFFFF] tracking-tight">
               STAIR Retrieval Pipeline Walkthrough
             </h2>
-            <p className="text-xs md:text-sm text-[#FAF5E9]/80 max-w-2xl leading-relaxed">
+            <p className="text-xs md:text-sm text-[#BBBFBF] max-w-2xl leading-relaxed">
               Explore step-by-step how Findly AI uses Structure-Aware Information Retrieval (STAIR) and Prefix Trie validation to deliver exact runbooks with zero chunk fragmentation.
             </p>
           </div>
 
           {/* Playback Controls */}
-          <div className="flex items-center space-x-2.5 bg-[#050d08]/90 p-2 rounded-2xl border border-[#009B4D]/30 shadow-lg">
+          <div className="flex items-center space-x-2 bg-[#0a0e14]/90 p-2 rounded-2xl border border-[#BBBFBF]/15 shadow-lg">
             <button
               onClick={handlePrev}
               title="Previous Step"
-              className="p-2.5 rounded-xl hover:bg-white/10 text-[#FAF5E9]/80 hover:text-[#FAF5E9] transition-colors"
+              className="p-2.5 rounded-xl hover:bg-white/10 text-[#BBBFBF] hover:text-[#FFFFFF] transition-colors"
             >
               <SkipBack className="w-4 h-4" />
             </button>
 
             <button
               onClick={() => setIsPlaying(!isPlaying)}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#009B4D] to-[#008240] hover:from-[#00b85b] hover:to-[#009B4D] text-[#FAF5E9] font-bold text-xs flex items-center space-x-2 shadow-lg shadow-[#009B4D]/25 transition-all"
+              className="px-4 py-2 rounded-xl bg-[#05AD98] hover:bg-[#08c9af] text-[#FFFFFF] font-bold text-xs flex items-center space-x-2 shadow-lg shadow-[#05AD98]/25 transition-all"
             >
               {isPlaying ? (
                 <>
-                  <Pause className="w-4 h-4 fill-current text-[#FFCC00]" />
+                  <Pause className="w-4 h-4 fill-current text-[#FFFFFF]" />
                   <span>Pause</span>
                 </>
               ) : (
                 <>
-                  <Play className="w-4 h-4 fill-current text-[#FFCC00]" />
+                  <Play className="w-4 h-4 fill-current text-[#FFFFFF]" />
                   <span>Auto Play</span>
                 </>
               )}
@@ -387,7 +387,7 @@ export default function StairInteractiveVisualizer({ onSelectQuery }) {
             <button
               onClick={handleNext}
               title="Next Step"
-              className="p-2.5 rounded-xl hover:bg-white/10 text-[#FAF5E9]/80 hover:text-[#FAF5E9] transition-colors"
+              className="p-2.5 rounded-xl hover:bg-white/10 text-[#BBBFBF] hover:text-[#FFFFFF] transition-colors"
             >
               <SkipForward className="w-4 h-4" />
             </button>
@@ -395,7 +395,7 @@ export default function StairInteractiveVisualizer({ onSelectQuery }) {
             <button
               onClick={handleReset}
               title="Reset to Stage 1"
-              className="p-2.5 rounded-xl hover:bg-white/10 text-[#FAF5E9]/60 hover:text-[#FAF5E9] transition-colors"
+              className="p-2.5 rounded-xl hover:bg-white/10 text-[#878787] hover:text-[#FFFFFF] transition-colors"
             >
               <RotateCcw className="w-4 h-4" />
             </button>
@@ -403,8 +403,8 @@ export default function StairInteractiveVisualizer({ onSelectQuery }) {
         </div>
 
         {/* Scenario Switcher Pills */}
-        <div className="mt-6 pt-5 border-t border-[#009B4D]/25 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="text-xs text-[#FAF5E9]/70 font-semibold uppercase tracking-wider">
+        <div className="mt-6 pt-5 border-t border-[#BBBFBF]/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="text-xs text-[#878787] font-semibold uppercase tracking-wider">
             Select Active Inquiry Scenario:
           </div>
           <div className="flex flex-wrap gap-2">
@@ -421,11 +421,11 @@ export default function StairInteractiveVisualizer({ onSelectQuery }) {
                   }}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all flex items-center space-x-2 ${
                     isSelected
-                      ? 'bg-[#009B4D] text-[#FAF5E9] shadow-md shadow-[#009B4D]/30 font-bold'
-                      : 'bg-[#050d08] text-[#FAF5E9]/70 hover:text-[#FAF5E9] border border-[#009B4D]/20 hover:border-[#009B4D]/50'
+                      ? 'bg-[#05AD98] text-[#FFFFFF] shadow-md shadow-[#05AD98]/25 font-bold'
+                      : 'bg-[#0a0e14] text-[#BBBFBF] hover:text-[#FFFFFF] border border-[#BBBFBF]/15 hover:border-[#05AD98]/40'
                   }`}
                 >
-                  <IconComp className="w-3.5 h-3.5 text-[#FFCC00]" />
+                  <IconComp className="w-3.5 h-3.5" />
                   <span>{s.name}</span>
                 </button>
               );
@@ -435,13 +435,13 @@ export default function StairInteractiveVisualizer({ onSelectQuery }) {
       </div>
 
       {/* Interactive Connected Pipeline Stepper (7 Stages) */}
-      <div className="relative p-6 border border-[#009B4D]/30 rounded-3xl bg-[#09160e]/60 shadow-xl overflow-x-auto">
+      <div className="relative p-6 border border-[#BBBFBF]/15 rounded-3xl bg-[#0f141c]/60 shadow-xl overflow-x-auto">
         <div className="min-w-[760px]">
           {/* Progress Connector Track */}
           <div className="relative flex items-center justify-between">
-            <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-1 bg-[#050d08] rounded-full z-0">
+            <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-1 bg-[#0a0e14] rounded-full z-0">
               <div
-                className="h-full bg-gradient-to-r from-[#009B4D] via-[#00b85b] to-[#FFCC00] rounded-full transition-all duration-500"
+                className="h-full bg-gradient-to-r from-[#05AD98] via-[#08c9af] to-[#FFFFFF] rounded-full transition-all duration-500"
                 style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
               ></div>
             </div>
@@ -466,20 +466,20 @@ export default function StairInteractiveVisualizer({ onSelectQuery }) {
                   <div
                     className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-xl ${
                       isActive
-                        ? 'bg-gradient-to-tr from-[#009B4D] to-[#008240] text-[#FAF5E9] ring-4 ring-[#009B4D]/40 shadow-[#009B4D]/50'
+                        ? 'bg-[#05AD98] text-[#FFFFFF] ring-4 ring-[#05AD98]/30 shadow-[#05AD98]/40'
                         : isPast
-                        ? 'bg-[#0d2015] border border-[#009B4D]/60 text-[#009B4D]'
-                        : 'bg-[#050d08] border border-[#009B4D]/25 text-[#FAF5E9]/50 hover:text-[#FAF5E9]'
+                        ? 'bg-[#05AD98]/20 border border-[#05AD98]/50 text-[#05AD98]'
+                        : 'bg-[#0a0e14] border border-[#BBBFBF]/20 text-[#878787] hover:text-[#FFFFFF]'
                     }`}
                   >
-                    <IconComp className={`w-5 h-5 ${isActive ? 'text-[#FFCC00]' : ''}`} />
+                    <IconComp className="w-5 h-5" />
                   </div>
                   <span className={`text-[11px] font-semibold mt-2.5 tracking-tight transition-colors ${
-                    isActive ? 'text-[#009B4D] font-bold' : isPast ? 'text-[#FAF5E9]' : 'text-[#FAF5E9]/50'
+                    isActive ? 'text-[#05AD98] font-bold' : isPast ? 'text-[#FFFFFF]' : 'text-[#878787]'
                   }`}>
                     {step.shortTitle}
                   </span>
-                  <span className="text-[9px] font-mono text-[#FFCC00]">
+                  <span className="text-[9px] font-mono text-[#878787]">
                     Step {step.id}
                   </span>
                 </button>
@@ -493,63 +493,63 @@ export default function StairInteractiveVisualizer({ onSelectQuery }) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Stage Explanation & Highlights (7 cols) */}
         <div className="lg:col-span-7 space-y-6">
-          <div className="p-6 border border-[#009B4D]/30 rounded-3xl bg-[#09160e]/85 shadow-2xl relative">
-            <div className="flex items-center justify-between pb-4 border-b border-[#009B4D]/25">
+          <div className="p-6 border border-[#BBBFBF]/15 rounded-3xl bg-[#0f141c]/85 shadow-2xl relative">
+            <div className="flex items-center justify-between pb-4 border-b border-[#BBBFBF]/15">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#009B4D] to-[#008240] flex items-center justify-center text-[#FAF5E9] shadow-lg border border-[#009B4D]/30">
-                  <activeStep.icon className="w-5 h-5 text-[#FFCC00]" />
+                <div className="w-10 h-10 rounded-2xl bg-[#05AD98] flex items-center justify-center text-[#FFFFFF] shadow-lg">
+                  <activeStep.icon className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-[#FFCC00] font-mono">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-[#05AD98] font-mono">
                     {activeStep.badge} OF 07
                   </div>
-                  <h3 className="text-xl font-bold text-[#FAF5E9] tracking-tight">
+                  <h3 className="text-xl font-bold text-[#FFFFFF] tracking-tight">
                     {activeStep.title}
                   </h3>
                 </div>
               </div>
 
-              <span className="text-xs px-3 py-1 rounded-full bg-[#0d2015] border border-[#009B4D]/40 text-[#FAF5E9] font-mono">
+              <span className="text-xs px-3 py-1 rounded-full bg-[#151c27] border border-[#BBBFBF]/20 text-[#BBBFBF] font-mono">
                 Interactive Inspector
               </span>
             </div>
 
             {/* Stage Summary */}
-            <p className="text-sm text-[#FAF5E9]/85 mt-4 leading-relaxed font-normal">
+            <p className="text-sm text-[#BBBFBF] mt-4 leading-relaxed font-normal">
               {activeStep.summary}
             </p>
 
             {/* Key Architectural Details */}
             <div className="mt-5 space-y-2.5">
-              <div className="text-xs font-semibold text-[#FAF5E9]/70 uppercase tracking-wider">
+              <div className="text-xs font-semibold text-[#878787] uppercase tracking-wider">
                 Key Architectural Mechanics:
               </div>
               {activeStep.details.map((item, i) => (
-                <div key={i} className="flex items-start space-x-2.5 text-xs text-[#FAF5E9]/90 bg-[#050d08]/70 p-3 rounded-xl border border-[#009B4D]/15">
-                  <Check className="w-4 h-4 text-[#009B4D] flex-shrink-0 mt-0.5" />
+                <div key={i} className="flex items-start space-x-2.5 text-xs text-[#FFFFFF] bg-[#0a0e14]/70 p-3 rounded-xl border border-[#BBBFBF]/10">
+                  <Check className="w-4 h-4 text-[#05AD98] flex-shrink-0 mt-0.5" />
                   <span className="leading-relaxed">{item}</span>
                 </div>
               ))}
             </div>
 
             {/* Stepper Navigation Buttons */}
-            <div className="flex items-center justify-between pt-6 mt-6 border-t border-[#009B4D]/25">
+            <div className="flex items-center justify-between pt-6 mt-6 border-t border-[#BBBFBF]/15">
               <button
                 onClick={handlePrev}
                 disabled={currentStep === 0}
-                className="px-4 py-2 rounded-xl bg-[#050d08] hover:bg-white/5 disabled:opacity-30 border border-[#009B4D]/30 text-xs text-[#FAF5E9]/80 font-medium transition-colors"
+                className="px-4 py-2 rounded-xl bg-[#0a0e14] hover:bg-white/5 disabled:opacity-30 border border-[#BBBFBF]/20 text-xs text-[#BBBFBF] font-medium transition-colors"
               >
                 Previous Stage
               </button>
 
-              <div className="text-xs text-[#FFCC00] font-mono">
+              <div className="text-xs text-[#05AD98] font-mono">
                 {currentStep + 1} of {steps.length}
               </div>
 
               <button
                 onClick={handleNext}
                 disabled={currentStep === steps.length - 1}
-                className="px-4 py-2 rounded-xl bg-[#009B4D] hover:bg-[#00b85b] disabled:opacity-30 text-[#FAF5E9] text-xs font-bold shadow-md shadow-[#009B4D]/20 transition-all"
+                className="px-4 py-2 rounded-xl bg-[#05AD98] hover:bg-[#08c9af] disabled:opacity-30 text-[#FFFFFF] text-xs font-bold shadow-md shadow-[#05AD98]/20 transition-all"
               >
                 Next Stage
               </button>
@@ -557,9 +557,9 @@ export default function StairInteractiveVisualizer({ onSelectQuery }) {
           </div>
 
           {/* Educational Comparison Box: Traditional RAG vs STAIR */}
-          <div className="p-6 border border-[#009B4D]/25 rounded-3xl bg-[#09160e]/50 shadow-xl space-y-4">
-            <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-[#FAF5E9]/80">
-              <Layers className="w-4 h-4 text-[#009B4D]" />
+          <div className="p-6 border border-[#BBBFBF]/15 rounded-3xl bg-[#0f141c]/50 shadow-xl space-y-4">
+            <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-[#FFFFFF]">
+              <Layers className="w-4 h-4 text-[#05AD98]" />
               <span>Architectural Advantage: Chunk-Based RAG vs. STAIR</span>
             </div>
 
@@ -570,7 +570,7 @@ export default function StairInteractiveVisualizer({ onSelectQuery }) {
                   <AlertCircle className="w-4 h-4 text-rose-400" />
                   <span>Ordinary Chunk-Based RAG</span>
                 </div>
-                <ul className="text-[#FAF5E9]/70 space-y-1.5 list-disc pl-4 leading-relaxed">
+                <ul className="text-[#BBBFBF] space-y-1.5 list-disc pl-4 leading-relaxed">
                   <li>Cuts documents arbitrarily at fixed 512 token boundaries.</li>
                   <li>Splits commands away from prerequisites and warnings.</li>
                   <li>Loses hierarchical context (e.g. section titles and parent nodes).</li>
@@ -579,12 +579,12 @@ export default function StairInteractiveVisualizer({ onSelectQuery }) {
               </div>
 
               {/* Findly STAIR */}
-              <div className="p-4 rounded-2xl bg-[#0d2015] border border-[#009B4D]/40 space-y-2">
-                <div className="font-bold text-[#009B4D] flex items-center space-x-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-[#FFCC00]" />
+              <div className="p-4 rounded-2xl bg-[#05AD98]/10 border border-[#05AD98]/30 space-y-2">
+                <div className="font-bold text-[#05AD98] flex items-center space-x-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-[#05AD98]" />
                   <span>Findly Structure-Aware RAG (STAIR)</span>
                 </div>
-                <ul className="text-[#FAF5E9]/90 space-y-1.5 list-disc pl-4 leading-relaxed">
+                <ul className="text-[#FFFFFF] space-y-1.5 list-disc pl-4 leading-relaxed">
                   <li>Preserves full document Table of Contents hierarchy.</li>
                   <li>Prefix Trie constrains search strictly to registered leaves.</li>
                   <li>Retrieves complete, executable procedural units intact.</li>
@@ -597,22 +597,22 @@ export default function StairInteractiveVisualizer({ onSelectQuery }) {
 
         {/* Right: Live Data Inspector & Artifact View (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="p-6 border border-[#009B4D]/30 rounded-3xl bg-[#09160e]/90 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#009B4D]/25">
+          <div className="p-6 border border-[#BBBFBF]/15 rounded-3xl bg-[#0f141c]/90 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#BBBFBF]/15">
               <div className="flex items-center space-x-2">
-                <Terminal className="w-4 h-4 text-[#009B4D]" />
-                <span className="text-xs font-bold text-[#FAF5E9] tracking-wide uppercase">
+                <Terminal className="w-4 h-4 text-[#05AD98]" />
+                <span className="text-xs font-bold text-[#FFFFFF] tracking-wide uppercase">
                   Scenario Telemetry Data
                 </span>
               </div>
-              <span className="text-[10px] font-mono text-[#FFCC00] bg-[#0d2015] border border-[#FFCC00]/30 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-mono text-[#05AD98] bg-[#0a0e14] border border-[#05AD98]/30 px-2 py-0.5 rounded-full">
                 {activeStepData.type || "Live Pipeline"}
               </span>
             </div>
 
             {/* Code / Visual Data Display */}
-            <div className="bg-[#050d08] p-4 rounded-2xl border border-[#009B4D]/25 text-xs font-mono text-[#FAF5E9] overflow-x-auto max-h-96">
-              <pre className="text-[11px] leading-relaxed text-[#FAF5E9]">
+            <div className="bg-[#0a0e14] p-4 rounded-2xl border border-[#BBBFBF]/15 text-xs font-mono text-[#FFFFFF] overflow-x-auto max-h-96">
+              <pre className="text-[11px] leading-relaxed text-[#FFFFFF]">
                 {JSON.stringify(activeStepData, null, 2)}
               </pre>
             </div>
@@ -621,30 +621,30 @@ export default function StairInteractiveVisualizer({ onSelectQuery }) {
             {onSelectQuery && (
               <button
                 onClick={() => onSelectQuery(currentScenarioData.query)}
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#009B4D] to-[#008240] hover:from-[#00b85b] hover:to-[#009B4D] text-[#FAF5E9] font-bold text-xs flex items-center justify-center space-x-2 shadow-lg shadow-[#009B4D]/20 transition-all"
+                className="w-full py-2.5 rounded-xl bg-[#05AD98] hover:bg-[#08c9af] text-[#FFFFFF] font-bold text-xs flex items-center justify-center space-x-2 shadow-lg shadow-[#05AD98]/20 transition-all"
               >
-                <Eye className="w-3.5 h-3.5 text-[#FFCC00]" />
+                <Eye className="w-3.5 h-3.5" />
                 <span>Test Scenario in STAIR Chat</span>
               </button>
             )}
           </div>
 
           {/* Live Baseline Stats Callout */}
-          <div className="p-5 border border-[#009B4D]/30 rounded-3xl bg-[#09160e]/60 shadow-xl space-y-3">
-            <div className="text-xs font-bold text-[#FAF5E9]/80 uppercase tracking-wider flex items-center justify-between">
+          <div className="p-5 border border-[#BBBFBF]/15 rounded-3xl bg-[#0f141c]/60 shadow-xl space-y-3">
+            <div className="text-xs font-bold text-[#878787] uppercase tracking-wider flex items-center justify-between">
               <span>Ground Truth Normal Envelope</span>
-              <span className="text-[10px] text-[#FFCC00] font-mono">1,869 Normal Events</span>
+              <span className="text-[10px] text-[#05AD98] font-mono">1,869 Normal Events</span>
             </div>
             <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="p-3 bg-[#050d08] rounded-xl border border-[#009B4D]/20">
-                <div className="text-[#FAF5E9]/60 text-[10px]">Normal Spawn Mean</div>
-                <div className="text-base font-bold text-[#FAF5E9] font-mono mt-0.5">19.79s ± 0.65s</div>
-                <div className="text-[10px] text-[#009B4D] mt-1">Normal envelope: 18.1s – 22.2s</div>
+              <div className="p-3 bg-[#0a0e14] rounded-xl border border-[#BBBFBF]/15">
+                <div className="text-[#878787] text-[10px]">Normal Spawn Mean</div>
+                <div className="text-base font-bold text-[#FFFFFF] font-mono mt-0.5">19.79s ± 0.65s</div>
+                <div className="text-[10px] text-[#05AD98] mt-1">Normal envelope: 18.1s – 22.2s</div>
               </div>
-              <div className="p-3 bg-[#050d08] rounded-xl border border-[#009B4D]/20">
-                <div className="text-[#FAF5E9]/60 text-[10px]">Normal Build Mean</div>
-                <div className="text-base font-bold text-[#FAF5E9] font-mono mt-0.5">20.59s ± 0.65s</div>
-                <div className="text-[10px] text-[#009B4D] mt-1">Normal envelope: 18.9s – 23.3s</div>
+              <div className="p-3 bg-[#0a0e14] rounded-xl border border-[#BBBFBF]/15">
+                <div className="text-[#878787] text-[10px]">Normal Build Mean</div>
+                <div className="text-base font-bold text-[#FFFFFF] font-mono mt-0.5">20.59s ± 0.65s</div>
+                <div className="text-[10px] text-[#05AD98] mt-1">Normal envelope: 18.9s – 23.3s</div>
               </div>
             </div>
           </div>
