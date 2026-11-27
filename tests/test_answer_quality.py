@@ -69,3 +69,16 @@ def test_legit_remove_question_still_answered(ask):
 def test_parse_command_risks():
     content = "Do it:\n```bash\nsystemctl restart x\n```\nRisk Level: **HIGH** (careful)."
     assert parse_command_risks(content) == {"systemctl restart x": "HIGH"}
+
+
+def test_generic_fix_lists_all_steps_safe_first(ask):
+    retrieval, response = ask("How do I fix keystone token expiration errors?")
+    cmds = [c["command"] for c in response.proposed_commands]
+    assert cmds[0] == "chronyc tracking && chronyc sources"
+    assert 'echo "flush_all" | nc localhost 11211' in cmds
+
+
+def test_why_slow_vm_leads_with_read_only_check(ask):
+    _, response = ask("Why did instance 544fd51c-4edc-4780-baae-ba1d80a0acfc take so long to spawn?")
+    assert [c["risk_level"] for c in response.proposed_commands] == ["LOW"]
+    assert "41.81" in response.detailed_explanation
